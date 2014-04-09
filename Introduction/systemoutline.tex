@@ -1,0 +1,64 @@
+An illustration of the overall system in this project is presented on \figref{fig:systemoutline}. This system is used in the AAUSAT3 satellite which was launched into orbit on February the 25th, 2013. The system consists of a hardware platform containing an RF frontend, ADC and the DSP-based demodulator. Upon receiving an AIS packet the system demodulates it using the DSP, verifies it and later transmits it to a PC (on the ground) which is used for decoding the AIS data and presenting it. %In space this means the AIS packets are received, demodulated (and verified) and then transmitted to a PC on the ground for further processing.
+
+\pfig{
+\scalebox{0.8}{
+\begin{pspicture}(19,4.65)(-0.75,0.75)
+ % \psgrid
+
+  \antenna[antennastyle=three](-0.75,3)
+  \psline(-0.75,3)(-0.75,2)(1.5,2)    
+
+	\rput(0.55,4.4){\textcolor{jgray}{AIS signals}}		
+	\psline[arrowscale=2,linecolor=jgray]{<-}(-0.4,3.9)(0.8,4.1)(0.4,3.7)(1.6,3.9)	
+	
+	\psframe[fillstyle=solid,fillcolor=lightgray,linecolor=gray](10,3)(14,1)
+	\rput(12,2.25){Demodulator}	
+	\rput(12,1.75){\footnotesize{(BF537 DSP)}}	
+
+    %%% ADC
+
+	\psline[arrowscale=2]{->}(4,1.5)(6,1.5)
+	\psline[arrowscale=2]{->}(4,2.5)(6,2.5)
+	\pspolygon[fillstyle=solid,fillcolor=lightgray,linecolor=gray](6,2.5)(6.6,2.9)(8,2.9)(8,2.1)(6.6,2.1)
+	\pspolygon[fillstyle=solid,fillcolor=lightgray,linecolor=gray](6,1.5)(6.6,1.9)(8,1.9)(8,1.1)(6.6,1.1)
+	\psline[arrowscale=2]{->}(8,1.5)(10,1.5)
+	\psline[arrowscale=2]{->}(8,2.5)(10,2.5)
+	
+	
+ 	\rput(7.15,2.5){ADC}  
+	\rput(7.15,1.5){\footnotesize{(AD7262)}}
+
+    %%% FRONT END
+
+	\psframe[fillstyle=solid,fillcolor=lightgray,linecolor=gray](0,1)(4,3)
+	\rput(2,2.25){RF frontend}	
+	\rput(2,1.75){\footnotesize{(ADF7020)}}	
+ 	\psline[linecolor=gray,linestyle=dashed](-0.35,3.35)(-0.35,0.65)(14.35,0.65)(14.35,3.35)(-0.35,3.35)
+ 	\rput(7,3.7){\textcolor{gray}{Satellite hardware platform}}
+ 	\rput(4.25,2.75){\small{\textcolor{black}{I}}}
+ 	\rput(4.25,1.75){\small{\textcolor{black}{Q}}}
+ 		
+    %%% AIS DECODER 
+    \psline[arrowscale=2]{->}(14,2)(16,2)  
+    \psset{origin={0,-0.25}}
+
+	\rput(17.5,4.1){AIS decoder}  
+	\rput(17.5,3.6){\footnotesize{(PC software)}}  
+	\psframe[fillstyle=solid,fillcolor=lightgray,linecolor=gray](16,1.3)(19,1)
+ 	\psframe[fillstyle=solid,fillcolor=lightgray,linecolor=gray](16,3.5)(19,1.3)  
+ 	\psframe[fillstyle=solid,fillcolor=darkgray,linecolor=gray](16.2,3.3)(18.8,1.5) 
+
+	\rput[l](16.25,2.9){\tiny \textcolor{white}{ID MMSI Latt. Long.}}
+	\rput[l](16.25,2.7){\tiny \textcolor{green}{1 \hspace{0.8 mm} 5973 \hspace{0.8 mm} 8249 \hspace{0.3 mm} 4191}}
+	\rput[l](16.25,2.5){\tiny \textcolor{green}{3 \hspace{0.8 mm} 1979 \hspace{0.8 mm} 6945 \hspace{0.3 mm} 7262}}
+	\rput[l](16.25,2.3){\tiny \textcolor{green}{1 \hspace{0.8 mm} 7174 \hspace{0.8 mm} 3244 \hspace{0.3 mm} 4371}}
+	\rput[l](16.25,2.1){\tiny \textcolor{red}{1 \hspace{0.8 mm} 1973 \hspace{0.8 mm} 4145 \hspace{0.3 mm} 9293}}
+	\rput[l](16.25,1.9){\tiny \textcolor{green}{3 \hspace{0.8 mm} 6471 \hspace{0.8 mm} 3145 \hspace{0.3 mm} 4911}}
+	\rput[l](16.25,1.7){\tiny \textcolor{green}{1 \hspace{0.8 mm} 2972 \hspace{0.8 mm} 3255 \hspace{0.3 mm} 3297}}
+	\rput[l](16.25,1.5){\tiny \textcolor{red}{4 \hspace{0.8 mm} 1983 \hspace{0.8 mm} 1245 \hspace{0.3 mm} 4291}}
+\end{pspicture}
+}
+}{Illustration of overall system}{fig:systemoutline}
+
+\subsection{Delimitation}
+As mentioned in the introduction, the focus of this project is placed on the demodulator. The satellite hardware platform contains an ADF7020 universal RF transceiver which is used as RF frontend. This chip removes out-of-band interferences and uses a low IF architecture to down-convert the RF signal. Subsequently it uses a complex band-pass IF filter to remove interferences and suppress the image frequency. Following the IF filter stage the down-converted signal is sampled using an AD7262 ADC and demodulated using the DSP. The frontend and ADC will be described further in the following chapter. In the remainder of the report the demodulator algorithms will be designed and tested. A basic AIS decoder is also developed, however, to keep the focus on the demodulator this decoding process is very basic and only used to verify received packets. A more detailed system description is presented in \chref{ch:reqs} where the system is divided into sub-systems.

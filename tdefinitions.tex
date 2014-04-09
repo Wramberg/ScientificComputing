@@ -1,0 +1,208 @@
+\makeatletter
+%
+\def\ttransistor{\def\pst@par{}\pst@object{ttransistor}}
+\def\ttransistor@i(#1){%
+%  \addbefore@par{circedge=\pcangle}
+  \pst@killglue
+  \begingroup
+  \use@par%
+  \@ifnextchar({\ttransistor@iii(#1)}{\Pst@tempfalse\ttransistor@ii(#1)}}
+%
+\def\ttransistor@ii(#1)#2#3#4#5{% with one node, the base
+  \pst@killglue%
+  \ifPst@temp\pnode(#1){TBaseNode}%
+  \else%
+    \pst@getcoor{#1}\pst@tempA%
+    \pnode(!
+      \pst@tempA /YB exch \pst@number\psyunit div def
+      /XB exch \pst@number\psxunit div def
+      /basesep \Pst@basesep\space \pst@number\psxunit div def
+      XB basesep \Pst@TRot\space cos mul add
+      YB basesep \Pst@TRot\space sin mul add){TBaseNode}% base node
+  \fi%
+  \psdot(#1)%
+  \rput[c]{\Pst@TRot}(TBaseNode){%(#1){%
+    \ifPst@transistorcircle\pscircle(0.3,0){0.7}\fi%
+    \ifx\psk@Ttype\pst@Ttype@FET\relax%
+      \ifPst@FETmemory% atosch
+        \psline[arrows=-,linewidth=\psk@I@width](-0.15,0.5)(-0.15,-0.5)%
+      \fi%
+      \psline[arrows=-,linewidth=\psk@I@width](TBaseNode|0,0.5)(TBaseNode|0,-0.5)%
+    \else%
+      \psline[arrows=-,linewidth=4\pslinewidth](TBaseNode|0,0.4)(TBaseNode|0,-0.4)%
+    \fi%
+    \ifnum180=\Pst@TRot\relax%
+      \rput{180}(#5,0){#4} % HIER
+      \ifx\psk@Ttype\pst@Ttype@FET\relax%
+        \ifPst@transistorinvert\pnode(0.75,-0.5){#2}\else\pnode(0.75,-0.5){#3}\fi%
+        \ifPst@transistorinvert\pnode(0.75,0.5){#3}\else\pnode(0.75,0.5){#2}\fi%
+      \else%
+        \ifPst@transistorinvert\pnode(0.5,-0.5){#2}\else\pnode(0.5,-0.5){#3}\fi%
+        \ifPst@transistorinvert\pnode(0.5,0.5){#3}\else\pnode(0.5,0.5){#2}\fi%
+      \fi%
+    \else%
+      \rput(#5,0){#4} % HIER
+      \ifx\psk@Ttype\pst@Ttype@FET\relax%
+        \ifPst@transistorinvert\pnode(0.65,0.5){#2}\else\pnode(0.65,0.5){#3}\fi%
+        \ifPst@transistorinvert\pnode(0.65,-0.5){#3}\else\pnode(0.65,-0.5){#2}\fi%
+      \else%
+        \ifPst@transistorinvert\pnode(0.5,0.5){#2}\else\pnode(0.5,0.5){#3}\fi%
+        \ifPst@transistorinvert\pnode(0.5,-0.5){#3}\else\pnode(0.5,-0.5){#2}\fi%
+      \fi%
+    \fi%
+    \ifx\psk@Ttype\pst@Ttype@FET\relax%
+      \ifnum180=\Pst@TRot\relax
+        \psline[arrows=-](0.6,0.5)(0.05,0.5)
+        \psline[linestyle=dashed,dash=8pt 3pt,arrows=-](0.05,0.6)(0.05,-0.6)
+        \psline[arrows=-](0.05,-0.5)(0.6,-0.5)%
+      \else 
+        \psline[arrows=-](0.65,0.5)(0.15,0.5)
+        \psline[linestyle=dashed,dash=8pt 3pt,arrows=-](0.15,0.6)(0.15,-0.6)
+        \psline[arrows=-](0.15,-0.5)(0.65,-0.5)%
+      \fi%
+    \else%
+      \psline[arrows=-](0.5,0.5)(TBaseNode)(0.5,-0.5)%
+    \fi%
+    \ifx\psk@Ttype\pst@Ttype@FET\relax%
+%      \ifx\psk@Ttype\pst@Ttype@PNP\relax%
+      \ifx\psk@FETchanneltype\pst@FETchanneltype@P\relax% Ted 2007-10-15
+        \psline[arrowinset=0,arrowsize=8\pslinewidth]{->}(0.15,0)(0.65,0)%
+	\qdisk(#2){1.5pt}\psline[origin={#2}]{-}(0,0.5)%
+      \else%
+        \psline[arrowinset=0,arrowsize=8\pslinewidth]{<-}(0.15,0)(0.65,0)%
+	\qdisk(#2){1.5pt}\psline[origin={#2}]{-}(0,0.5)%
+      \fi%
+    \else%
+      \ifx\psk@Ttype\pst@Ttype@PNP\relax%
+        \psline[arrowinset=0,arrowsize=8\pslinewidth]{->}(#3)(TBaseNode)%
+      \else%
+         \psline[arrowinset=0,arrowsize=8\pslinewidth]{->}(TBaseNode)(#2)%
+      \fi%
+    \fi%
+  }%
+  \ifPst@temp\else\endgroup\fi%
+  \ignorespaces%
+}
+%
+\def\ttransistor@iii(#1)(#2)(#3)(#4)(#5){% with three nodes
+  \pst@getcoor{#1}\pst@tempA%
+  \pst@getcoor{#2}\pst@tempB%
+  \pst@getcoor{#3}\pst@tempC%
+  \pnode(!%
+    \pst@tempA /Y1 exch \pst@number\psyunit div def
+    /X1 exch \pst@number\psxunit div def
+    \pst@tempB /Y2 exch \pst@number\psyunit div def
+    /X2 exch \pst@number\psxunit div def
+    \pst@tempC /Y3 exch \pst@number\psyunit div def
+    /X3 exch \pst@number\psxunit div def
+    /LR X1 X2 lt { false }{ true } ifelse def % change left-right
+    /basesep \Pst@basesep\space \pst@number\psxunit div def
+    /XBase X1 basesep \Pst@TRot\space cos mul add def
+    /YBase Y1 basesep \Pst@TRot\space sin mul add def
+    XBase YBase ){@@base}% base node
+%
+  \Pst@temptrue%
+  \ttransistor@ii(@@base){@@emitter}{@@collector}{#4}{#5}%
+%
+  \if\psk@labeltransistoribase\@empty\else\psset{transistoribase=true}\fi%
+  \if\psk@labeltransistoriemitter\@empty\else\psset{transistoriemitter=true}\fi%
+  \if\psk@labeltransistoricollector\@empty\else\psset{transistoricollector=true}\fi%
+  \ifPst@intensity\psset{transistoribase=true,transistoriemitter=true,transistoricollector=true}\fi%
+%
+  \bgroup\psset{style=baseOpt}\pscirc@edge(#1)(TBaseNode)\egroup%
+  \ifPst@transistoribase% base current?
+    \ncput[npos=0.5,nrot=\Pst@TRot]{%
+      \psline[linecolor=\psk@I@color,linewidth=\psk@I@width,%
+        arrowsize=6\pslinewidth,arrowinset=0]{->}(-.1,0)(.1,0)}%
+    \naput[npos=0.5]{\csname\psk@I@labelcolor\endcsname\psk@labeltransistoribase}%
+  \fi%
+  \bgroup%
+    \psset{style=collectorOpt}%
+    \ifPst@transistorinvert\pscirc@edge(#3)(@@emitter)\else\pscirc@edge(#3)(@@collector)\fi%
+  \egroup%
+  \ncput[npos=2]{\pnode{\ifPst@transistorinvert @@emitter\else @@collector\fi}}%
+  \ifPst@transistoriemitter% emitter current?
+    \ifPst@transistorinvert% emitter/collector changed?
+      \ncput[npos=\pscirc@edge@sector,nrot=:U]{%
+        \psline[linecolor=\psk@I@color,linewidth=\psk@I@width,%
+    arrowsize=6\pslinewidth,arrowinset=0]{->}(-0.1,0)(0.1,0)}
+      \nbput[npos=\pscirc@edge@sector]{\csname\psk@I@labelcolor\endcsname\psk@labeltransistoriemitter}
+    \fi\fi%
+  \ifPst@transistoricollector% collector current?
+    \ifPst@transistorinvert\else% emitter/collector changed?
+      \ncput[npos=\pscirc@edge@sector,nrot=:U]{%
+        \psline[linecolor=\psk@I@color,linewidth=\psk@I@width,%
+    arrowsize=6\pslinewidth,arrowinset=0]{->}(-.1,0)(.1,0)}
+      \nbput[npos=\pscirc@edge@sector]{\csname\psk@I@labelcolor\endcsname\psk@labeltransistoricollector}
+    \fi\fi%
+  \bgroup
+  \psset{style=emitterOpt}
+  \ifPst@transistorinvert\pscirc@edge(#2)(@@collector)\else\pscirc@edge(#2)(@@emitter)\fi
+  \egroup
+  \ncput[npos=2]{\pnode{\ifPst@transistorinvert @@collector\else @@emitter\fi}}
+  \ifPst@transistoriemitter
+    \ifPst@transistorinvert\else
+      \ncput[npos=\pscirc@edge@sector,nrot=:U]{%
+        \psline[linecolor=\psk@I@color,linewidth=\psk@I@width,
+    arrowsize=6\pslinewidth,arrowinset=0]{<-}(-.1,0)(.1,0)}
+      \naput[npos=\pscirc@edge@sector]{\csname\psk@I@labelcolor\endcsname\psk@labeltransistoriemitter}
+    \fi\fi%
+  \ifPst@transistoricollector% collector current?
+    \ifPst@transistorinvert% emitter/collector changed?
+      \ncput[npos=\pscirc@edge@sector,nrot=:U]{%
+        \psline[linecolor=\psk@I@color,linewidth=\psk@I@width,
+    arrowsize=6\pslinewidth,arrowinset=0]{<-}(-.1,0)(.1,0)}
+      \naput[npos=\pscirc@edge@sector]{\csname\psk@I@labelcolor\endcsname\psk@labeltransistoricollector}
+    \fi\fi
+  \psline[linestyle=none](#1)(#2)% for the end arrows
+  \psline[linestyle=none](#1)(#3)% for the end arrows
+  \endgroup
+  \ignorespaces%
+}
+
+\def\tnot(#1){%
+	\rput(#1){%
+		\pnode(0,0){notI}
+	        \psline([nodesep=0.25,angle=90]notI)([nodesep=0.25,angle=-90]notI)
+	        \psline([nodesep=0.25,angle=90]notI)([nodesep=0.5,angle=0]notI)
+	        \psline([nodesep=0.25,angle=-90]notI)([nodesep=0.5,angle=0]notI)
+	        \pscircle([nodesep=0.6,angle=0]notI){0.1}
+	        }
+    }
+\def\tor(#1){%
+    \rput(#1){%
+		\pnode(0,0){or2}
+        \pnode([nodesep=0.5,angle=90]or2){or1}
+        \pnode([nodesep=0.25,angle=90]or2){ormid}
+        \pnode([nodesep=1]ormid){or3}
+        \psbezier[showpoints=false]{-}([nodesep=0.25,angle=100]or1)([nodesep=0.25,angle=5]ormid)([nodesep=0.25,angle=-5]ormid)([nodesep=0.25,angle=-100]or2)
+        \psline([nodesep=0.1]or2)([nodesep=-0.5]or2)
+        \psline([nodesep=0.1]or1)([nodesep=-0.5]or1)
+        \psbezier[showpoints=false]{-}([nodesep=0.25,angle=100]or1)([nodesep=0.5,angle=20]or1)([nodesep=0.6,angle=10]or1)(or3)
+        \psbezier[showpoints=false]{-}([nodesep=0.25,angle=-100]or2)([nodesep=0.5,angle=-20]or2)([nodesep=0.6,angle=-10]or2)(or3)
+        }
+    }
+\def\tand(#1){%
+    \rput(#1){%
+        \pnode(0,0){and0}
+		\pnode([nodesep=0.5,angle=90]and0){and1}
+        \pnode([nodesep=0.25,angle=90]and1){and1h}
+        \pnode([nodesep=0.25,angle=-90]and0){and0h}
+        \pnode([nodesep=0.5,angle=-90]and1h){andm}
+        \psarc([nodesep=0.5]andm){0.5}{-90}{90}
+        \psline(and1h)([nodesep=0.5]and1h)
+        \psline(and0h)([nodesep=0.5]and0h)
+        \psline(and1)([nodesep=-0.5]and1)
+        \psline(and0)([nodesep=-0.5]and0)
+        \psline(and1h)(and0h)
+        \psline([nodesep=1]andm)([nodesep=1.5]andm)
+        }
+    }
+
+
+
+    
+    
+
+\makeatother
+

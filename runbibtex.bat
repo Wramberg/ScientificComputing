@@ -1,0 +1,1 @@
+bibtex main1.aux && bibtex main2.aux && bibtex main3.aux

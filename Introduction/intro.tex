@@ -1,0 +1,177 @@
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+\chapter{Theoretical aspects} \label{ch:intro}
+In this chapter, some theoretical aspects of the translational loop on \figref{qwd} are presented and discussed.
+
+\section{Mathematical expressions}
+In this section, mathematical expressions are derived for the different signals in the loop. If the numerically controlled oscillator (NCO) is considered first, the output $y(t_n)$ can be expressed as
+\begin{flalign}
+& & y(t_n) &= 1 \cdot \cos\big(2\pi f_0 t_n + \phi'_y(t_n)\big) & &
+\end{flalign}
+where $f_0$ denotes the free running frequency, $t_n$ is discrete time-steps given as $\frac{n}{f_s}$ for $n=1,2,...,N-1$ and $\phi'_y(t_n)$ is given as
+\begin{flalign}
+& & \phi'_y(t_n) &= 2\pi k_{co} \cdot \frac{1}{f_s} \sum\limits_{\ell=0}^{n}v(t_{\ell}) & &
+\end{flalign}
+where $k_{co}$ is the NCO constant, $v(t_{\ell})$ is the NCO input and $f_s$ denotes the sampling frequency. The point of the translational loop is to control the phase of the output $\phi'_x(t_n)$, or rather, have it follow the phase of the input. To do this, the frequency difference between the in- and output must first be accounted for. This is done by translating the free-running frequency $f_0$ to the input frequency $f_{\text{if}}$. As shown on \figref{qwd}, this is done by mixing the oscilator output with an external signal. This signal is given as
+\begin{flalign}
+& & z(t_n) &= 2\cos\big(2\pi(f_0-f_{\text{if}})t_n\big) & &
+\end{flalign}
+where, as seen, the frequency is equal to the NCO frequency with the wanted output frequency subtracted. Note that this means the external oscillator signal is low-side injected (in terms of frequency translation). This means that image (or mirror) frequency will be located at $f_0-2\cdot f_{\text{if}}$ which can interfere with the loop. Since an ideal case is considered however, the image frequency will not be taken into consideration. The output signal of the mixing $j(t_n)$ can be expressed as
+\begin{flalign}
+& & j(t_n) &= z(t_n) \cdot y(t_n) = 2\cos\big(2\pi(f_0-f_{\text{if}})t_n\big)      \cdot   \cos\big(2\pi f_0 t_n + \phi'_y(t_n)\big) & & \\
+& & &= \cos\big(2\pi(f_0-f_{\text{if}}+f_0)t_n + \phi'_y(t_n)\big)   +  \cos\big(2\pi(f_0-f_{\text{if}}-f_0)t_n - \phi'_y(t_n)\big)  & & \\
+& & &= \cos\big(2\pi(2f_0-f_{\text{if}})t_n + \phi'_y(t_n)\big)   +  \cos\big(2\pi(-f_{\text{if}})t_n - \phi'_y(t_n)\big)  & &
+\end{flalign}
+where the mixing product located at $f_{\text{if}}$ is the one of interest. For this reason the bandpass (BP) filter is be located around $f_{\text{if}}$ yielding the $s(t_n)$ signal which can be rewritten as
+\begin{flalign}
+& & s(t_n) &= \cos\big(2\pi(-f_{\text{if}})t_n - \phi'_y(t_n)\big)   & & \\
+& &        &= \cos\big(2\pi f_{\text{if}} \:t_n + \phi'_y(t_n)\big)  & &
+\end{flalign}
+assuming an ideal BP filter which completly removes the other mixing product. There are (at least) two important aspects of the $s(t_n)$ signal that should be noted. First, the frequency of the signal is equal to that of the input signal which is important when the phases are to be compared. Second, the $s(t_n)$ signal has the same phase as the NCO output which is essential since it simplifies the comparison. To compare the NCO output phase with the phase of the input signal, the input signal is mixed with the $s(t_n)$ signal. The input signal $x(t_n)$ is given as
+\begin{flalign}
+& & x(t_n) &= 1 \cdot \sin\big(2\pi f_{\text{if}} \: t_n + \phi'_x(t_n)\big) & &
+\end{flalign}
+which means the mixing output can be expressed as
+\begin{flalign}
+& & u(t_n) &= x(t_n) \cdot s(t_n) & & \\
+& & u(t_n) &= \sin\big(2\pi f_{\text{if}} \: t_n + \phi'_x(t_n)\big)    \cdot     \cos\big(2\pi f_{\text{if}} \:t_n + \phi'_y(t_n)\big)     & & \\
+& & u(t_n) &= \frac{1}{2}\bigg( \sin\big(2\pi 2f_{\text{if}} \: t_n + \phi'_x(t_n) + \phi'_y(t_n) \big)    +    \sin\big(\phi'_x(t_n) - \phi'_y(t_n)\big)\bigg)     & &
+\end{flalign}
+which results in the lower mixing product only depending on the phase difference. To isolate this, the $u(t_n)$ signal is lowpass filtered which means $v(t_n)$ can be expressed as 
+\begin{flalign}
+& & v(t_n) &= \frac{1}{2}\sin\big(\phi'_x(t_n) - \phi'_y(t_n)\big)     & &
+\end{flalign}
+assuming perfect lowpass filtering. Note that the sine operation (not cosine) is used in this expression to ensure that the output is equal to zero when there is no phase difference. This causes the system to be non-linear, however, due to the sine function.
+
+\section{Initial phase considerations}
+qwd
+
+\section{Phase transfer function}
+For small phase differences the following approximation holds
+\begin{flalign}
+& & \frac{1}{2}\sin\big(\phi'_x(t_n) - \phi'_y(t_{n-1})\big)  &= \frac{1}{2}(\phi'_x(t_n) - \phi'_y(t_{n-1}))   & &
+\end{flalign}
+Using this approximation the output phase $\phi'_y(t_n)$ can be expressed as
+\begin{flalign}
+& & \phi'_y(t_n) &= 2\pi k_{co} \cdot \frac{1}{f_s} \sum\limits_{\ell=0}^{n}v(t_{\ell}) & & \\
+& &              &= \pi k_{co} \cdot \frac{1}{f_s} \sum\limits_{\ell=0}^{n}(\phi'_x(t_{\ell}) - \phi'_y(t_{\ell-1})) & &
+\end{flalign}
+
+%\pfig{
+%\scalebox{0.76}{
+%\begin{pspicture}(22,6.5)(0.25,0.5)
+%	%\psgrid
+%  	
+%    \psframe[fillstyle=solid,fillcolor=rblue,linestyle=dashed,linecolor=darkblue,linewidth=0.005](-0.25,0.5)(5.7,6.5)
+%    \psframe[fillstyle=solid,fillcolor=rred,linestyle=dashed,linecolor=darkred,linewidth=0.005](5.8,0.5)(19.7,6.5)
+%    \psframe[fillstyle=solid,fillcolor=rgreen,linestyle=dashed,linecolor=darkgreen2,linewidth=0.005](19.8,0.5)(22.75,6.5)
+%    \rput(2.75,6){\textcolor{darkblue}{Analysis}}
+%    \rput(13,6){\textcolor{darkred}{Design}}
+%    \rput(21.25,6){\textcolor{darkgreen2}{Test}}
+
+%	\psframe[fillstyle=solid,fillcolor=lightgray,linecolor=gray](0,1)(2.5,2.5)
+%	\psframe[fillstyle=solid,fillcolor=lightgray,linecolor=gray](0,3.5)(2.5,5)
+%	
+%	\psframe[fillstyle=solid,fillcolor=lightgray,linecolor=gray](3,2.25)(5.5,3.75)
+%	
+%	\psframe[fillstyle=solid,fillcolor=lightgray,linecolor=gray](6,2.25)(12,3.75)
+%	
+%	\psframe[fillstyle=solid,fillcolor=lightgray,linecolor=gray](12.5,2.25)(15,3.75)
+
+%	\psframe[fillstyle=solid,fillcolor=lightgray,linecolor=gray](15.5,2.25)(19.5,3.75)
+%	
+%	\psframe[fillstyle=solid,fillcolor=lightgray,linecolor=gray](20,2.25)(22.5,3.75)
+%	
+%	\rput(1.25,4.7){\textcolor{darkgray}{\scriptsize  Chapter 2}}
+%	\rput(1.25,4.25){Preliminary}    
+%	\rput(1.25,3.85){analysis}  
+%	\psline[arrowscale=1.5]{->}(2.25,3.75)(3.25,3.25)
+%	
+%	\rput(1.25,2.2){\textcolor{darkgray}{\scriptsize  Chapter 3}}
+%	\rput(1.25,1.75){Hardware}
+%	\rput(1.25,1.35){platform}
+%	\psline[arrowscale=1.5]{->}(2.25,2.25)(3.25,2.75)
+%	
+%	\rput(4.25,3.45){\textcolor{darkgray}{\scriptsize  Chapter 4}}
+%	\rput(4.25,3){Require-}
+%	\rput(4.25,2.6){ments}
+%	\psline[arrowscale=1.5]{->}(5.25,2.85)(6.25,2.85)
+%	
+%	\rput(9,3.45){\textcolor{darkgray}{\scriptsize  Chapter 5, 6 and 7}}
+%	\rput(7.25,3){Alg.}
+%	\rput(7.25,2.6){specification}
+%	\psline[arrowscale=1.5]{->}(8.25,2.85)(9,2.85)
+%	\rput(9.5,3){Alg.}
+%	\rput(9.5,2.6){design}
+%	\psline[arrowscale=1.5]{->}(10,2.85)(10.85,2.85)
+%	\rput(11.25,3){Alg.}
+%	\rput(11.25,2.6){test}
+%    \psline[arrowscale=1.5]{->}(11.85,2.85)(13,2.85)
+%	
+%	\rput(13.75,3.45){\textcolor{darkgray}{\scriptsize  Chapter 8}}
+%	\rput(13.75,3){Alg.}
+%	\rput(13.75,2.6){realisation}	
+%    \psline[arrowscale=1.5]{->}(14.5,2.85)(15.8,2.85)
+%	
+%	\rput(17.5,3.45){\textcolor{darkgray}{\scriptsize  Chapter 9}}
+%	\rput(16.5,3){Arch.}
+%	\rput(16.5,2.6){design}	
+%    \psline[arrowscale=1.5]{->}(17.15,2.85)(17.65,2.85)
+%	\rput(18.35,3){Arch.}
+%	\rput(18.35,2.6){impl.}	
+%    \psline[arrowscale=1.5]{->}(19.1,2.85)(20.25,2.85)	
+
+%	\rput(21.25,3.45){\textcolor{darkgray}{\scriptsize  Chapter 10}}
+%	\rput(21.25,3){Acceptance}
+%	\rput(21.25,2.6){test}	
+
+%    \psline[linecolor=darkred,linestyle=dashed,linewidth=0.01](12.25,1.75)(12.25,4.5)
+%    \psline[linecolor=darkred,linestyle=dashed,linewidth=0.01](15.25,1.75)(15.25,4.5)
+%    \rput(9,4.1){\textcolor{darkred}{Behavioral domain}}
+%    \rput(9,1.9){\textcolor{darkred}{Simulated/tested in python}}
+%%    \rput(9,1.5){\textcolor{darkred}{(double-precision)}}
+%    \rput(13.75,4.5){\textcolor{darkred}{Structural}}
+%    \rput(13.75,4.1){\textcolor{darkred}{domain}}
+%    \rput(13.75,1.9){\textcolor{darkred}{Simulated in}}
+%    \rput(13.75,1.5){\textcolor{darkred}{python}}
+%%    \rput(13.75,1.1){\textcolor{darkred}{(fixed-point)}}
+%    \rput(17.5,4.1){\textcolor{darkred}{Physical domain}}
+%    \rput(17.5,1.9){\textcolor{darkred}{Simulated/impl. in}}
+%    \rput(17.5,1.5){\textcolor{darkred}{VHDL}}
+%    %\psline[arrowscale=1.25]{->}(11.9,2)(11.9,3.35)
+%\end{pspicture}
+%}
+%}{Report structure}{fig:reportstucture}
+
+\chapter{Simulation platform} \label{ch:intro}
+In this chapter, a simulation platform is developed to test/verify the mathematical expressions for the translational loop.
+
+\section{NCO}
+qwd
+
+\section{Mixing and bandpass filtering}
+qwd
+
+\section{Input mixing}
+qwd
+
+\section{Lowpass filtering}
+qwd
+
+\chapter{Simulation results} \label{ch:intro}
+In this chapter, results are presented from the simulation platform developed in the previous chapter.
+
+
+
+
+
+
+
+
+
+
+
+
+
+

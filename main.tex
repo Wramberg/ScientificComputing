@@ -1,0 +1,46 @@
+% Preamble
+\input{preamble.tex}
+
+% User settings
+\InputIfFileExists{userprefs.tmp}{}{}
+
+% Begin document
+\begin{document}
+\singlespacing
+\pagestyle{empty} % Ingen sidetal (header og footer er tomme)
+
+% Front page
+\input{frontpage}
+\cleardoublepage
+
+% Reset pagestyle
+\pagestyle{plain}	
+
+% Toc
+\tableofcontents 
+\onehalfspacing
+\newpage 
+
+% Rest of report
+\include{Introduction/intro} % bemærk pagenumbering{arabic} og setcounter{page}{1} heri	
+\pagestyle{fancy} % Normal sidedesign med sidetal forneden (plain for at fjerne header, fancy for at vise)
+	
+%% End of the report (almost)
+%% list of figures etc.
+%\include{references}
+
+%% Appendix overview
+%\include{appendixoverview}
+
+%% Appendix
+%\include{appendix}
+
+
+%%%%% Til brug for print af figure/selve folduddiagrammerne til appendiks %%%%
+% \newpage
+% \mbox{}
+% \pagestyle{empty}
+% \newpage
+% \include{appendiksfiles/appendiksprint}
+
+\end{document}
