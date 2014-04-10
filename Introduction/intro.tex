@@ -44,20 +44,43 @@ which results in the lower mixing product only depending on the phase difference
 \end{flalign}
 assuming perfect lowpass filtering. Note that the sine operation (not cosine) is used in this expression to ensure that the output is equal to zero when there is no phase difference. This causes the system to be non-linear, however, due to the sine function.
 
-\section{Initial phase considerations}
+\section{Initial state considerations}
 qwd
 
 \section{Phase transfer function}
-For small phase differences the following approximation holds
+For small phase differences between $x(t_n)$ and $s(t_{n-1})$ the following approximation holds
 \begin{flalign}
 & & \frac{1}{2}\sin\big(\phi'_x(t_n) - \phi'_y(t_{n-1})\big)  &= \frac{1}{2}(\phi'_x(t_n) - \phi'_y(t_{n-1}))   & &
 \end{flalign}
-Using this approximation the output phase $\phi'_y(t_n)$ can be expressed as
+Which can be utilized to express the output phase $\phi'_y(t_n)$ as
 \begin{flalign}
 & & \phi'_y(t_n) &= 2\pi k_{co} \cdot \frac{1}{f_s} \sum\limits_{\ell=0}^{n}v(t_{\ell}) & & \\
-& &              &= \pi k_{co} \cdot \frac{1}{f_s} \sum\limits_{\ell=0}^{n}(\phi'_x(t_{\ell}) - \phi'_y(t_{\ell-1})) & &
+& &              &= 2\pi k_{co} \cdot \frac{1}{f_s} \left( \sum\limits_{\ell=0}^{n-1}v(t_{\ell}) + v(t_n) \right) & & \\
+& &              &= 2\pi k_{co} \cdot \frac{1}{f_s} \left( \sum\limits_{\ell=0}^{n-1}v(t_{\ell}) + \phi'_x(t_n) - \phi'_y(t_{n-1}) \right) & & \label{eq:phaseaprox}
 \end{flalign}
-
+Where the summation can be expressed as
+\begin{flalign}
+& & \phi'_y(t_{n-1}) &= 2\pi k_{co} \cdot \frac{1}{f_s} \sum\limits_{\ell=0}^{n-1}v(t_{\ell}) & & \\
+& &\Downarrow & & &  \notag \\ 
+& & \sum\limits_{\ell=0}^{n-1}v(t_{\ell}) &= \frac{f_s}{2\pi k_{co}} \phi'_y(t_{n-1})   & & \label{eq:summationexp}
+\end{flalign}
+Inserting \eqref{eq:summationexp} into \eqref{eq:phaseaprox} yields that
+\begin{flalign}
+& & \phi'_y(t_n) &= 2\pi k_{co} \cdot \frac{1}{f_s} \left( \sum\limits_{\ell=0}^{n-1}v(t_{\ell}) + \phi'_x(t_n) - \phi'_y(t_{n-1}) \right) & & \\
+& &              &= 2\pi k_{co} \cdot \frac{1}{f_s} \left( \frac{f_s}{2\pi k_{co}} \phi'_y(t_{n-1}) + \phi'_x(t_n) - \phi'_y(t_{n-1}) \right) & & \\
+& &              &= \phi'_y(t_{n-1}) +  2\pi k_{co} \cdot \frac{1}{f_s} \phi'_x(t_n) -  2\pi k_{co} \cdot \frac{1}{f_s} \phi'_y(t_{n-1}) & &
+\end{flalign}
+Where isolating the phase terms on each side of the equation yields
+\begin{flalign}
+& & 2\pi k_{co} \cdot \frac{1}{f_s} \phi'_x(t_n) &= \phi'_y(t_n) - \phi'_y(t_{n-1}) + 2\pi k_{co} \cdot \frac{1}{f_s} \phi'_y(t_{n-1})& & \\
+& & &\Downarrow \mathcal Z(\cdot) & & \notag \\
+& & 2\pi k_{co} \cdot \frac{1}{f_s} \phi'_x(z) &= \phi'_y(z) - \phi'_y(z)z^{-1} + 2\pi k_{co} \cdot \frac{1}{f_s} \phi'_y(z) z^{-1}& & \\
+& & 2\pi k_{co} \cdot \frac{1}{f_s} \phi'_x(z) &= \phi'_y(z) \left(1 - z^{-1} + 2\pi k_{co} \cdot \frac{1}{f_s} z^{-1} \right)& &
+\end{flalign}
+From which the phase transfer function can be expressed as
+\begin{flalign}
+& & \frac{\phi'_y(z)}{\phi'_x(z)} & = \frac{2\pi k_{co} \cdot \frac{1}{f_s}}{ 1 - z^{-1} + 2\pi k_{co} \cdot \frac{1}{f_s} z^{-1}} & &
+\end{flalign}
 %\pfig{
 %\scalebox{0.76}{
 %\begin{pspicture}(22,6.5)(0.25,0.5)
