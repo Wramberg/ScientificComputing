@@ -56,6 +56,7 @@ def loop(x, tn):
     v    = np.empty(N)
     phiy = np.empty(N)
 
+    # Calculate signals for n = 1
     u[0]    = x[0] * sm1
     v[0]    = u[0] * b[0] + um1 * b[1] - vm1 * a[1]
     phiy[0] = 0
