@@ -2,7 +2,41 @@
 \setcounter{page}{1}
 
 \chapter{Theoretical aspects} \label{ch:intro}
-In this chapter, some theoretical aspects of the translational loop on \figref{qwd} are presented and discussed.
+In this chapter, some theoretical aspects of the translational loop on \figref{fig:assignmentloop} are presented and discussed.
+
+\begin{figure}[h!]
+    \centering
+    \begin{pspicture}(9,9.5)(0,5.5)
+    %\psgrid
+        \psset{arrowscale=1.5,fillstyle=solid,fillcolor=lightgray} %linecolor=gray
+
+        %wires
+        \psline{->}(0,9)(1,9)   \rput(0,9.25){x}
+        \psline{->}(2,9)(3,9)   \rput(2.5,9.25){u}
+        \psline{->}(5,9)(6,9)   \rput(5.5,9.25){v}
+        \psline{->}(7,9)(9,9)   \rput(9,9.25){y}
+        \psline[arrowscale=1.25]{*-}(8,9)(8,7)
+        \psline{->}(8,7)(7,7)
+        \psline{->}(6.5,6)(6.5,6.5)    \rput(6.5,5.75){z}
+        \psline{->}(6,7)(5,7)
+        \psline(3,7)(1.5,7)
+        \psline{->}(1.5,7)(1.5,8.5)     \rput(1.25,7.75){s}
+
+        %lpf
+        \psset{linecolor=gray}
+        \psframe(3,9.5)(5,8.5)  \rput(4,9){LPF}
+
+        %bpf
+        \psframe(3,7.5)(5,6.5)  \rput(4,7){BPF}
+
+        %mixers
+        \pscircle(1.5,9){0.5}   \rput(1.5,9){\scalebox{4}{$\times$}}
+        \pscircle(6.5,9){0.5}   \rput(6.5,9){\large X} % OSCILLATOR
+        \pscircle(6.5,7){0.5}   \rput(6.5,7){\scalebox{4}{$\times$}}
+    \end{pspicture}
+    \caption{Translational loop}
+    \label{fig:assignmentloop}
+\end{figure}
 
 \section{Mathematical expressions}
 In this section, mathematical expressions are derived for the different signals in the loop. If the numerically controlled oscillator (NCO) is considered first, the output $y(t_n)$ can be expressed as
