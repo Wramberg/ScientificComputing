@@ -1,7 +1,10 @@
 from __future__ import division
 import numpy as np
-# import matplotlib.pyplot as plt
 import scipy.signal as signal
+import matplotlib.pyplot as plt
+import sys
+sys.path.append('/home/tausen/p8/git/code/')
+import basics
 
 
 N = int(3e3)
@@ -10,19 +13,8 @@ f0 = 1.9e6
 kco = 500e3
 fs = 0
 
-def nco(x, fs):
-    global f0, kco
 
-    N = x.size
-    y = np.zeros(N)
-    for n in range(N):
-        y[n] = np.sin(2 * np.pi * f0 * n / fs + 2 * np.pi * kco * 1 / fs * np.sum(x[0:n]))
-
-    t = np.arange(0, N) / fs
-    return t, y
-
-
-def loadfiles():
+def getinput():
     global N, fif, fs
 
     I = np.genfromtxt("gmsk_I.dat")[:N]
@@ -35,49 +27,50 @@ def loadfiles():
     tn = np.arange(len(I)) / fs
     x = I * np.cos(2 * np.pi * fif * tn) - Q * np.sin(2 * np.pi * fif * tn)
 
-    phix = np.unwrap(np.arctan2(I, Q))
+    phix = np.unwrap(np.arctan2(Q, I))
 
     return tn, x, phix
 
 
-def getz(t):
-    global f0, fif
+def gety(tn, phiy):
+    global f0
 
-    z = 2 * np.cos(2 * np.pi * (f0 - fif) * t)
+    y = np.cos(2 * np.pi * f0 * tn + phiy)
+    return y
 
-    return z
 
+def loop(x, tn):
+    global fs, f0, fif, kco, N
 
-def gety(x, z, tn):
-    global fs, f0, fif, kco
-    
-    # n = -1
-    sm1 = 0
+    # Values of s[-1], u[-1] and v[-1]
+    sm1 = 1
     um1 = 0
     vm1 = 0
 
+    # Get coefficients of 1st order Butterworth lowpass filter
     b, a = signal.butter(1, 200e3 / (fs / 2), 'low')
 
-    N = len(x)
-    u = np.empty(N)
-    s = np.empty(N)
-    v = np.empty(N)
-    y = np.empty(N)
+    # Initialize arrays for signals
+    u    = np.empty(N)
+    s    = np.empty(N)
+    v    = np.empty(N)
     phiy = np.empty(N)
-    for n in range(N):
-        if n == 0:
-            u[n] = x[n] * sm1
-            v[n] = u[n] * b[0] + um1 * b[1] + vm1 * a[1]
-            y[n] = 0
-        else:
-            u[n] = x[n] * s[n - 1]
-            v[n] = u[n] * b[0] + u[n - 1] * b[1] + v[n - 1] * a[1]
-            phiy[n] = 2 * np.pi * kco * 1 / fs * sum(v[:n])
-            y[n] = np.cos(2 * np.pi * f0 * tn[n] + phiy[n])
 
-    return u, v
+    u[0]    = x[0] * sm1
+    v[0]    = u[0] * b[0] + um1 * b[1] - vm1 * a[1]
+    phiy[0] = 0
+    s[0]    = 0
 
+    # Main loop
+    for n in range(1, N):
+        u[n]    = x[n] * s[n - 1]
+        v[n]    = u[n] * b[0] + u[n - 1] * b[1] - v[n - 1] * a[1]
+        phiy[n] = 2 * np.pi * kco * 1 / fs * sum(v[:n])
+        s[n]    = np.cos(2 * np.pi * fif * tn[n] + phiy[n])
 
-tn, x, phix = loadfiles()
-z = getz(tn)
-u, v = gety(x, z)
+    return u, v, phiy, s
+
+if fs == 0:
+    tn, x, phix = getinput()
+
+u, v, phiy, s = loop(x, tn)
