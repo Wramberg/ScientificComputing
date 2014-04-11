@@ -56,17 +56,17 @@ def loop(x, tn):
     v    = np.empty(N)
     phiy = np.empty(N)
 
-    # Calculate signals for n = 1
+    # Calculate signals for n = 0
     u[0]    = x[0] * sm1
     v[0]    = u[0] * b[0] + um1 * b[1] - vm1 * a[1]
-    phiy[0] = 0
-    s[0]    = 0
+    phiy[0] = 2 * np.pi * kco * 1 / fs * np.sum(v[:1])
+    s[0]    = np.cos(2 * np.pi * fif * tn[0] + phiy[0])
 
     # Main loop
     for n in range(1, N):
         u[n]    = x[n] * s[n - 1]
         v[n]    = u[n] * b[0] + u[n - 1] * b[1] - v[n - 1] * a[1]
-        phiy[n] = 2 * np.pi * kco * 1 / fs * sum(v[:n])
+        phiy[n] = 2 * np.pi * kco * 1 / fs * np.sum(v[:n + 1])
         s[n]    = np.cos(2 * np.pi * fif * tn[n] + phiy[n])
 
     return u, v, phiy, s
