@@ -208,7 +208,7 @@ In this chapter, a simulation platform is developed to test/verify the mathemati
 \section{Input}
 Beskrivelse af hvordan vi får input ind... egentlig bare funktion med sigende kommentarer
 
-\lstset{language=python,caption=pe,label=code:asdf}
+\lstset{language=python,caption=Reading the input data files,label=code:getinput}
 \begin{lstlisting}
 def getinput():
     global N, fif, fs
@@ -237,7 +237,7 @@ def getinput():
 \section{Translational loop}
 qwd
 
-\lstset{language=python,caption=pe,label=code:asdff}
+\lstset{language=python,caption=The translational loop,label=code:loop}
 \begin{lstlisting}
 def loop(x, tn):
     global fs, f0, fif, kco, N
@@ -274,7 +274,14 @@ def loop(x, tn):
 
 
 \section{Output}
-qwd
+\lstset{language=python,caption=Generating the output,label=code:output}
+\begin{lstlisting}
+def gety(phiy, tn):
+    global f0
+
+    y = np.cos(2 * np.pi * f0 * tn + phiy)
+    return y
+\end{lstlisting}
 
 \chapter{Simulation results} \label{ch:intro}
 In this chapter, results are presented from the simulation platform developed in the previous chapter.
