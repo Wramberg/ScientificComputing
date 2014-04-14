@@ -723,6 +723,10 @@
 }
 \makeatother
 
+
+\makeatletter
+\renewcommand{\fnum@lstlisting}{\usefont{T1}{phv}{m}{sc}\textcolor{verydarkblue}{\lstlistingname~\thelstlisting}}
+\makeatother
 % This should make latex try to avoid orphans more... Max is 10000 but will probably fuck up latex :P
 %\widowpenalty=300
 %\clubpenalty=300

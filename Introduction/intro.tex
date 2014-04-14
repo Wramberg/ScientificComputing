@@ -2,11 +2,11 @@
 \setcounter{page}{1}
 
 \chapter{Theoretical aspects} \label{ch:intro}
-In this chapter, some theoretical aspects of the translational loop on \figref{fig:assignmentloop} are presented and discussed.
+In this chapter, theoretical aspects of the translational loop on \figref{fig:assignmentloop} are presented and discussed.
 
 \begin{figure}[h!]
     \centering
-    \begin{pspicture}(9,9.5)(0,5.5)
+    \begin{pspicture}(9,10)(0,5.75)
     %\psgrid
         \psset{arrowscale=1.5,fillstyle=solid,fillcolor=lightgray} %linecolor=gray
 
@@ -42,13 +42,13 @@ In this chapter, some theoretical aspects of the translational loop on \figref{f
 \section{Mathematical expressions}
 In this section, mathematical expressions are derived for the different signals in the loop. If the numerically controlled oscillator (NCO) is considered first, the output $y(t_n)$ can be expressed as
 \begin{flalign}
-& & y(t_n) &= 1 \cdot \cos\big(2\pi f_0 t_n + \phi'_y(t_n)\big) & &
+& & y(t_n) &= 1 \cdot \cos\big(2\pi f_0 t_n + \phi'_y(t_n)\big) & & \label{eq:yfunction}
 \end{flalign}
 where $f_0$ denotes the free running frequency, $t_n$ is discrete time-steps given as $\frac{n}{f_s}$ for $n=1,2,...,N-1$ and $\phi'_y(t_n)$ is given as
 \begin{flalign}
-& & \phi'_y(t_n) &= 2\pi k_{co} \cdot \frac{1}{f_s} \sum\limits_{\ell=0}^{n}v(t_{\ell}) & &
+& & \phi'_y(t_n) &= 2\pi k_{co} \cdot \frac{1}{f_s} \sum\limits_{\ell=0}^{n}v(t_{\ell}) & & \label{eq:phiy}
 \end{flalign}
-where $k_{co}$ is the NCO constant, $v(t_{\ell})$ is the NCO input and $f_s$ denotes the sampling frequency. The point of the translational loop is to control the phase of the output $\phi'_x(t_n)$, or rather, have it follow the phase of the input. To do this, the frequency difference between the in- and output must first be accounted for. This is done by translating the free-running frequency $f_0$ to the input frequency $f_{\text{if}}$. As shown on \figref{qwd}, this is done by mixing the oscilator output with an external signal. This signal is given as
+where $k_{co}$ is the NCO constant, $v(t_{\ell})$ is the NCO input and $f_s$ denotes the sampling frequency. The point of the translational loop is to control the phase of the output $\phi'_y(t_n)$, or rather, have it follow the phase of the input. To do this, the frequency difference between the in- and output must first be accounted for. This is done by translating the free-running frequency $f_0$ to the input frequency $f_{\text{if}}$. As shown on the figure, this is done by mixing the oscilator output with an external signal. This signal is given as
 \begin{flalign}
 & & z(t_n) &= 2\cos\big(2\pi(f_0-f_{\text{if}})t_n\big) & &
 \end{flalign}
@@ -58,10 +58,10 @@ where, as seen, the frequency is equal to the NCO frequency with the wanted outp
 & & &= \cos\big(2\pi(f_0-f_{\text{if}}+f_0)t_n + \phi'_y(t_n)\big)   +  \cos\big(2\pi(f_0-f_{\text{if}}-f_0)t_n - \phi'_y(t_n)\big)  & & \\
 & & &= \cos\big(2\pi(2f_0-f_{\text{if}})t_n + \phi'_y(t_n)\big)   +  \cos\big(2\pi(-f_{\text{if}})t_n - \phi'_y(t_n)\big)  & &
 \end{flalign}
-where the mixing product located at $f_{\text{if}}$ is the one of interest. For this reason the bandpass (BP) filter is be located around $f_{\text{if}}$ yielding the $s(t_n)$ signal which can be rewritten as
+where the mixing product located at $f_{\text{if}}$ is the one of interest. For this reason the bandpass (BP) filter should be located around $f_{\text{if}}$ yielding the $s(t_n)$ signal which can be rewritten as
 \begin{flalign}
-& & s(t_n) &= \cos\big(2\pi(-f_{\text{if}})t_n - \phi'_y(t_n)\big)   & & \\
-& &        &= \cos\big(2\pi f_{\text{if}} \:t_n + \phi'_y(t_n)\big)  & &
+& & s(t_n) &= \cos\big(2\pi(-f_{\text{if}})t_n - \phi'_y(t_n)\big)   & &  \\
+& &        &= \cos\big(2\pi f_{\text{if}} \:t_n + \phi'_y(t_n)\big)  & & \label{eq:sfunc}
 \end{flalign}
 assuming an ideal BP filter which completly removes the other mixing product. There are (at least) two important aspects of the $s(t_n)$ signal that should be noted. First, the frequency of the signal is equal to that of the input signal which is important when the phases are to be compared. Second, the $s(t_n)$ signal has the same phase as the NCO output which is essential since it simplifies the comparison. To compare the NCO output phase with the phase of the input signal, the input signal is mixed with the $s(t_n)$ signal. The input signal $x(t_n)$ is given as
 \begin{flalign}
@@ -71,7 +71,7 @@ which means the mixing output can be expressed as
 \begin{flalign}
 & & u(t_n) &= x(t_n) \cdot s(t_n) & & \\
 & & u(t_n) &= \sin\big(2\pi f_{\text{if}} \: t_n + \phi'_x(t_n)\big)    \cdot     \cos\big(2\pi f_{\text{if}} \:t_n + \phi'_y(t_n)\big)     & & \\
-& & u(t_n) &= \frac{1}{2}\bigg( \sin\big(2\pi 2f_{\text{if}} \: t_n + \phi'_x(t_n) + \phi'_y(t_n) \big)    +    \sin\big(\phi'_x(t_n) - \phi'_y(t_n)\big)\bigg)     & &
+& & u(t_n) &= \frac{1}{2}\bigg( \sin\big(2\pi 2f_{\text{if}} \: t_n + \phi'_x(t_n) + \phi'_y(t_n) \big)    +    \sin\big(\phi'_x(t_n) - \phi'_y(t_n)\big)\bigg)     & & \label{eq:uneq}
 \end{flalign}
 which results in the lower mixing product only depending on the phase difference. To isolate this, the $u(t_n)$ signal is lowpass filtered which means $v(t_n)$ can be expressed as 
 \begin{flalign}
@@ -80,19 +80,50 @@ which results in the lower mixing product only depending on the phase difference
 assuming perfect lowpass filtering. Note that the sine operation (not cosine) is used in this expression to ensure that the output is equal to zero when there is no phase difference. This causes the system to be non-linear, however, due to the sine function.
 
 \section{Initial state considerations}
-qwd
+As stated in the assignment, there is no way to know the initial state for the system. Due to feedback and filtering in the loop, however, initial values for $n=-1$ must be assumed for some the signals.
+\newpage
+Assuming that 
+\begin{flalign}
+& & \phi'_x(t_{-1}) &= \phi'_y(t_{-1})\big) = 0 & &
+\end{flalign}
+$u(t_{-1})$ can be found using \eqref{eq:uneq} to
+\begin{flalign}
+& & u(t_{-1}) &= \frac{1}{2}\bigg( \sin\big(2\pi 2f_{\text{if}} \: t_{-1} + \phi'_x(t_{-1}) + \phi'_y(t_{-1}) \big)    +    \sin\big(\phi'_x(t_{-1}) - \phi'_y(t_{-1})\big)\bigg)     & & \\
+& &           &= \frac{1}{2}\bigg( \sin\big(2\pi 2f_{\text{if}} \: t_{-1} \big)\bigg)     & & 
+\end{flalign}
+Now assuming that $t_{-1} = 0 $, this yields
+\begin{flalign}
+& & u(t_{-1}) &= 0 = v(t_{-1}) & &
+\end{flalign}
+Which corresponds with \eqref{eq:phiy} where $v(t_{-1})$ must equal zero for the initial phase $\phi'_y(t_{-1})$ to be zero. This in turn means that $s(t_{-1})$, following \eqref{eq:sfunc}, must be given as
+\begin{flalign}
+& & s(t_{-1}) &= \cos\big(2\pi f_{\text{if}} \:t_{-1} + \phi'_y(t_{-1})\big) \\
+& &           &= \cos\big(2\pi f_{\text{if}} \:0)\big) \\
+& &           &= 1 & &
+\end{flalign}
+Which means the initial state for the loop can be given as
+\begin{flalign}
+& & s(t_{-1}) &= 1 \\
+& & u(t_{-1}) &= 0 \\
+& & v(t_{-1}) &= 0 & &
+\end{flalign}
+These values could of course be chosen differently, as long as they respect the underlying equations.
 
 \section{Phase transfer function}
-For small phase differences between $x(t_n)$ and $s(t_{n-1})$ the following approximation holds
+For small phase differences between $x(t_n)$ and $s(t_{n-1})$ the following holds
 \begin{flalign}
+%& & \phi'_x(t_n) - \phi'_y&(t_{n-1}) < 0.1  & & \\
+%& & &\Downarrow & & \notag \\
 & & \frac{1}{2}\sin\big(\phi'_x(t_n) - \phi'_y(t_{n-1})\big)  &= \frac{1}{2}(\phi'_x(t_n) - \phi'_y(t_{n-1}))   & &
 \end{flalign}
+
 Which can be utilized to express the output phase $\phi'_y(t_n)$ as
 \begin{flalign}
-& & \phi'_y(t_n) &= 2\pi k_{co} \cdot \frac{1}{f_s} \sum\limits_{\ell=0}^{n}v(t_{\ell}) & & \\
-& &              &= 2\pi k_{co} \cdot \frac{1}{f_s} \left( \sum\limits_{\ell=0}^{n-1}v(t_{\ell}) + v(t_n) \right) & & \\
+& & \phi'_y(t_n) &= 2\pi k_{co} \cdot \frac{1}{f_s} \sum\limits_{\ell=0}^{n}v(t_{\ell}) = 2\pi k_{co} \cdot \frac{1}{f_s} \left( \sum\limits_{\ell=0}^{n-1}v(t_{\ell}) + v(t_n) \right) & & \\
+%& &              &= 2\pi k_{co} \cdot \frac{1}{f_s} \left( \sum\limits_{\ell=0}^{n-1}v(t_{\ell}) + v(t_n) \right) & & \\
 & &              &= 2\pi k_{co} \cdot \frac{1}{f_s} \left( \sum\limits_{\ell=0}^{n-1}v(t_{\ell}) + \phi'_x(t_n) - \phi'_y(t_{n-1}) \right) & & \label{eq:phaseaprox}
 \end{flalign}
+\newpage
 Where the summation can be expressed as
 \begin{flalign}
 & & \phi'_y(t_{n-1}) &= 2\pi k_{co} \cdot \frac{1}{f_s} \sum\limits_{\ell=0}^{n-1}v(t_{\ell}) & & \\
@@ -114,101 +145,22 @@ Where isolating the phase terms on each side of the equation yields
 \end{flalign}
 From which the phase transfer function can be expressed as
 \begin{flalign}
-& & \frac{\phi'_y(z)}{\phi'_x(z)} & = \frac{2\pi k_{co} \cdot \frac{1}{f_s}}{ 1 - z^{-1} + 2\pi k_{co} \cdot \frac{1}{f_s} z^{-1}} & &
+& & \phi'(z) = \frac{\phi'_y(z)}{\phi'_x(z)} & = \frac{2\pi k_{co} \cdot \frac{1}{f_s}}{ 1 - z^{-1} + 2\pi k_{co} \cdot \frac{1}{f_s} z^{-1}} & & \\
+& &                               & = \frac{2\pi k_{co} \cdot \frac{1}{f_s}}{ 1 - (1 - 2\pi k_{co} \cdot \frac{1}{f_s}) z^{-1}} & &
 \end{flalign}
-%\pfig{
-%\scalebox{0.76}{
-%\begin{pspicture}(22,6.5)(0.25,0.5)
-%	%\psgrid
-%  	
-%    \psframe[fillstyle=solid,fillcolor=rblue,linestyle=dashed,linecolor=darkblue,linewidth=0.005](-0.25,0.5)(5.7,6.5)
-%    \psframe[fillstyle=solid,fillcolor=rred,linestyle=dashed,linecolor=darkred,linewidth=0.005](5.8,0.5)(19.7,6.5)
-%    \psframe[fillstyle=solid,fillcolor=rgreen,linestyle=dashed,linecolor=darkgreen2,linewidth=0.005](19.8,0.5)(22.75,6.5)
-%    \rput(2.75,6){\textcolor{darkblue}{Analysis}}
-%    \rput(13,6){\textcolor{darkred}{Design}}
-%    \rput(21.25,6){\textcolor{darkgreen2}{Test}}
+%Setting $k_{co}=500\cdot10^3$ and $fs=17.33 \cdot 10^6$ yields
+%\begin{flalign}
+%& & \phi'(z) = \frac{\phi'_y(z)}{\phi'_x(z)} &= \frac{2\pi 500\cdot10^3 \cdot \frac{1}{17.33 \cdot 10^6}}{ 1 - (1 - 2\pi 500\cdot10^3 \cdot \frac{1}{17.33 \cdot 10^6}) z^{-1}} \\
+%& &                               &= \frac{0.1812}{1-0.8188z^{-1}} & &
+%\end{flalign}
 
-%	\psframe[fillstyle=solid,fillcolor=lightgray,linecolor=gray](0,1)(2.5,2.5)
-%	\psframe[fillstyle=solid,fillcolor=lightgray,linecolor=gray](0,3.5)(2.5,5)
-%	
-%	\psframe[fillstyle=solid,fillcolor=lightgray,linecolor=gray](3,2.25)(5.5,3.75)
-%	
-%	\psframe[fillstyle=solid,fillcolor=lightgray,linecolor=gray](6,2.25)(12,3.75)
-%	
-%	\psframe[fillstyle=solid,fillcolor=lightgray,linecolor=gray](12.5,2.25)(15,3.75)
-
-%	\psframe[fillstyle=solid,fillcolor=lightgray,linecolor=gray](15.5,2.25)(19.5,3.75)
-%	
-%	\psframe[fillstyle=solid,fillcolor=lightgray,linecolor=gray](20,2.25)(22.5,3.75)
-%	
-%	\rput(1.25,4.7){\textcolor{darkgray}{\scriptsize  Chapter 2}}
-%	\rput(1.25,4.25){Preliminary}    
-%	\rput(1.25,3.85){analysis}  
-%	\psline[arrowscale=1.5]{->}(2.25,3.75)(3.25,3.25)
-%	
-%	\rput(1.25,2.2){\textcolor{darkgray}{\scriptsize  Chapter 3}}
-%	\rput(1.25,1.75){Hardware}
-%	\rput(1.25,1.35){platform}
-%	\psline[arrowscale=1.5]{->}(2.25,2.25)(3.25,2.75)
-%	
-%	\rput(4.25,3.45){\textcolor{darkgray}{\scriptsize  Chapter 4}}
-%	\rput(4.25,3){Require-}
-%	\rput(4.25,2.6){ments}
-%	\psline[arrowscale=1.5]{->}(5.25,2.85)(6.25,2.85)
-%	
-%	\rput(9,3.45){\textcolor{darkgray}{\scriptsize  Chapter 5, 6 and 7}}
-%	\rput(7.25,3){Alg.}
-%	\rput(7.25,2.6){specification}
-%	\psline[arrowscale=1.5]{->}(8.25,2.85)(9,2.85)
-%	\rput(9.5,3){Alg.}
-%	\rput(9.5,2.6){design}
-%	\psline[arrowscale=1.5]{->}(10,2.85)(10.85,2.85)
-%	\rput(11.25,3){Alg.}
-%	\rput(11.25,2.6){test}
-%    \psline[arrowscale=1.5]{->}(11.85,2.85)(13,2.85)
-%	
-%	\rput(13.75,3.45){\textcolor{darkgray}{\scriptsize  Chapter 8}}
-%	\rput(13.75,3){Alg.}
-%	\rput(13.75,2.6){realisation}	
-%    \psline[arrowscale=1.5]{->}(14.5,2.85)(15.8,2.85)
-%	
-%	\rput(17.5,3.45){\textcolor{darkgray}{\scriptsize  Chapter 9}}
-%	\rput(16.5,3){Arch.}
-%	\rput(16.5,2.6){design}	
-%    \psline[arrowscale=1.5]{->}(17.15,2.85)(17.65,2.85)
-%	\rput(18.35,3){Arch.}
-%	\rput(18.35,2.6){impl.}	
-%    \psline[arrowscale=1.5]{->}(19.1,2.85)(20.25,2.85)	
-
-%	\rput(21.25,3.45){\textcolor{darkgray}{\scriptsize  Chapter 10}}
-%	\rput(21.25,3){Acceptance}
-%	\rput(21.25,2.6){test}	
-
-%    \psline[linecolor=darkred,linestyle=dashed,linewidth=0.01](12.25,1.75)(12.25,4.5)
-%    \psline[linecolor=darkred,linestyle=dashed,linewidth=0.01](15.25,1.75)(15.25,4.5)
-%    \rput(9,4.1){\textcolor{darkred}{Behavioral domain}}
-%    \rput(9,1.9){\textcolor{darkred}{Simulated/tested in python}}
-%%    \rput(9,1.5){\textcolor{darkred}{(double-precision)}}
-%    \rput(13.75,4.5){\textcolor{darkred}{Structural}}
-%    \rput(13.75,4.1){\textcolor{darkred}{domain}}
-%    \rput(13.75,1.9){\textcolor{darkred}{Simulated in}}
-%    \rput(13.75,1.5){\textcolor{darkred}{python}}
-%%    \rput(13.75,1.1){\textcolor{darkred}{(fixed-point)}}
-%    \rput(17.5,4.1){\textcolor{darkred}{Physical domain}}
-%    \rput(17.5,1.9){\textcolor{darkred}{Simulated/impl. in}}
-%    \rput(17.5,1.5){\textcolor{darkred}{VHDL}}
-%    %\psline[arrowscale=1.25]{->}(11.9,2)(11.9,3.35)
-%\end{pspicture}
-%}
-%}{Report structure}{fig:reportstucture}
 
 \chapter{Simulation platform} \label{ch:intro}
-In this chapter, a simulation platform is developed to test/verify the mathematical expressions for the translational loop. numpy, scipy, global vars?
-
+In this chapter, a simulation platform is developed to perform tests on the translational loop. This platform is developed in MATLAB, just kidding, in Python. To do this, the numpy (np), scipy.signal (signal) and matplitlib.pyplot (plt) Python modules are used. It should be noted that the \texttt{\_\_future\_\_} statement for division is also used to map the division operator \texttt / to the \texttt{\_\_truediv\_\_()} function to ensure float division.
 \section{Input}
-Beskrivelse af hvordan vi får input ind... egentlig bare funktion med sigende kommentarer
+To import the input data, the function presented on \cref{code:input} was developed.
 
-\lstset{language=python,caption=Reading the input data files,label=code:getinput}
+\lstset{language=python,caption=Function for importing input data,label=code:input}
 \begin{lstlisting}
 def getinput():
     global N, fif, fs
@@ -231,13 +183,13 @@ def getinput():
 
     return tn, x, phix
 \end{lstlisting}
-
+As seen, the function uses the globally defined N as the number of samples to import. Furthermore, it uses a globally defined \texttt{fif} and \texttt{fs} to generate the input signal \texttt{x}. The function returns the time vector \texttt{tn} aswell as the phase \texttt{phix} and the signal itself \texttt{x}. After importing the input, the platform simulates the translational loop sample by sample, which is described in the next section.
 
 
 \section{Translational loop}
-qwd
+To simulate the translation loop, the function presented on \cref{code:transloop} was developed.\\
 
-\lstset{language=python,caption=The translational loop,label=code:loop}
+\lstset{language=python,caption=Function for simulating tranlational loop,label=code:transloop}
 \begin{lstlisting}
 def loop(x, tn):
     global fs, f0, fif, kco, N
@@ -256,7 +208,7 @@ def loop(x, tn):
     v    = np.empty(N)
     phiy = np.empty(N)
 
-    # Calculate signals for n = 1
+    # Calculate signals for n = 0
     u[0]    = x[0] * sm1
     v[0]    = u[0] * b[0] + um1 * b[1] - vm1 * a[1]
     phiy[0] = 0
@@ -272,31 +224,156 @@ def loop(x, tn):
     return u, v, phiy, s
 \end{lstlisting}
 
+As seen, the function takes the input signal and the time-vector as input. Subsequently, it simulates the translational loop sample-by-sample and returns relevant signals. The output signal y is not returned but can be computed from the phase signal \texttt{phiy} as shown in the next section. To compare the phase signals a function was developed for plotting them which is presented on \cref{code:phaseplot}.
+
+\lstset{language=python,caption=Function for plotting phase signals,label=code:phaseplot}
+\begin{lstlisting}
+def plotphases():
+    tn, x, phix = getinput()
+    u, v, phiy, s = loop(x, tn)
+    plt.figure(figsize=(11,2.75), dpi=200)   
+    plt.plot(phix, label='Phase of input signal')
+    plt.plot(phiy, label='Phase of output signal')
+    plt.legend(loc=1, prop={'size': 12}, labelspacing=0.25)
+    plt.subplots_adjust(left=0.1, right=0.9, bottom=0.175)
+    plt.savefig('phasesignals.eps') 
+\end{lstlisting}
+
 
 \section{Output}
-\lstset{language=python,caption=Generating the output,label=code:output}
+To compute the output signal from the phase signal, the function presented on \cref{code:output} can be used.
+
+\lstset{language=python,caption=Function for generation output signal,label=code:output}
 \begin{lstlisting}
 def gety(phiy, tn):
     global f0
-
     y = np.cos(2 * np.pi * f0 * tn + phiy)
     return y
 \end{lstlisting}
 
+
+\section{Phase error}
+To compute the phase error between the in- and output phases, the function in \cref{code:phaseerr} was developed. This function return the error signal as well as the root mean square (RMS) error.
+
+\lstset{language=python,caption=Function for computing phase errors,label=code:phaseerr}
+\begin{lstlisting}
+def getphaseerror(phix, phiy):
+    try:
+        diff = phix[:phiy.size] - phiy
+    except:
+        raise Exception('Failed to compare phase signals, phiy signal cannot be longer than phix signal')
+    rmserr = np.sqrt(np.mean(diff[250:] ** 2))
+    return diff, rmserr
+\end{lstlisting}
+
+To plot the phase error, the function in \cref{code:phaseerrplot} was developed.
+\lstset{language=python,caption=Function for plotting phase errors,label=code:phaseerrplot}
+\begin{lstlisting}
+def plotphaseerr(x):
+    plt.figure(figsize=(11,2.75), dpi=200)  
+    plt.plot(x)
+    plt.grid()
+    plt.xlabel('Samples')
+    plt.subplots_adjust(left=0.1, right=0.9, bottom=0.175)
+    plt.savefig('phaseerr.eps')  
+\end{lstlisting}
+
+
+\section{Phase compensation}
+To perform phase compensation on the output signal, the function in \cref{code:phasecomp} was developed. This function minimizes the RMS error (between the phase signals) to find the time-offset and the average error to find the phase offset.
+
+\lstset{language=python,caption=Function for performing phase compensation,label=code:phasecomp}
+\begin{lstlisting}
+def phasecomp(phix, phiy):
+    # Find phase offset
+    diff = phix[250:] - phiy[250:]
+    poff = np.mean(diff)
+
+    # Find time offset
+    maxoffset = 50
+    rmserr = np.empty(maxoffset)
+    for i in np.arange(0, maxoffset):
+        dummy, rmserr[i] = getphaseerror(phix[200:], phiy[200+maxoffset-i:] + poff)
+
+    toff = maxoffset - np.argmin(rmserr)
+    if toff < 0:
+        raise Exception('Got negative time offset, time delay should be positive')
+
+    return phiy[toff:] + poff
+\end{lstlisting}
+
+To find the time-offset a cross-correlation approach was initially considered. For time-delay estimation the cross correlation approach shows poor performance in high-snr applications however \cite{193195}. For this reason, the RMS approach was taken instead which is very similar to the average square difference estimator discussed in \cite{193195}. The only difference is the squareroot which has no effect on the resulting time-delay.
+%Note that \texttt{signal.fftconvolve()} is used instead of \texttt{np.correlate()}. This was chosen because convolution in frequency domain is considerably faster. Testing with 30.000 samples yields a \SI{33.6}{\milli\second} difference as shown on \cref{ode:fftconvcorr}.
+
+%\lstset{language=python,caption=Time tests for fft convolve vs. standard correlation,label=code:fftconvcorr}
+%\begin{lstlisting}
+%In [1]: run sim.py
+%In [2]: tn , x , phix = getinput()   
+%In [3]: u , v , phiy , s = loop(x, tn)
+%In [4]: diff = phix[250:] - phiy[250:]
+%In [5]: poff = np.mean(diff)
+%In [6]: %timeit signal.fftconvolve(phix, phiy[-500:500:-1]+poff, mode='valid')
+%100 loops, best of 3: 11.6 ms per loop
+%In [7]: %timeit np.correlate(phix, phiy[500:-500]+poff)
+%10 loops, best of 3: 45.2 ms per loop
+%\end{lstlisting}
+
+
+\section{Psd}
+To compute the averaged periodogram of a signal, the function in \cref{code:periodo} was developed.
+
+\lstset{language=python,caption=Function for computing averaged periodogram,label=code:periodo}
+\begin{lstlisting}
+def getperiodogram(x):
+    global fs
+    freqs, psd = signal.welch(x, fs=fs, window='boxcar', nperseg=300, noverlap=None, detrend='constant', return_onesided=True)
+    return freqs, psd
+\end{lstlisting}
+
+As seen, the \texttt{signal.welch()} function is used to compute the PSD. Natively, this function computes an averaged PSD by slicing overlapping segments of the input signal, windowing, detrending, and finally performing FFT, on each. In this simulation platform, however, the overlapping and windowing has been omitted and the detrending only removes DC-offset. This means the function simply computes an averaged periodogram using 300 samples non-overlapping segments. To present the PSD, the function returns a frequency axis and the computed PSD values along this axis. This is used by the function in \cref{code:periodoplot} for plotting periodograms.
+
+\lstset{language=python,caption=Function for plotting periodogram of in- and output signals,label=code:periodoplot}
+\begin{lstlisting}
+def plotpsd(x, y):
+    freqsx, psdx = getperiodogram(x)
+    freqsy, psdy = getperiodogram(y)
+    plt.figure(figsize=(11,2.75), dpi=200)  
+    plt.plot(freqsx/1e3, psdx, label='PSD of input signal')
+    plt.plot(freqsy/1e3, psdy, label='PSD of output signal')
+    plt.grid()
+    plt.xlim(0, 3e3)
+    plt.xlabel('Frequency [kHz]')
+    plt.legend(loc=1, prop={'size': 12}, labelspacing=0.25)
+    plt.subplots_adjust(left=0.1, right=0.9, bottom=0.175)
+    plt.savefig('psds.eps') 
+\end{lstlisting}
+
 \chapter{Simulation results} \label{ch:intro}
 In this chapter, results are presented from the simulation platform developed in the previous chapter.
+ 
+\section{Psd of in- and output (1)}
+On \figref{fig:psd1600} the PSDs are presented for the in- and output signals.
 
+\fig[keepaspectratio=true,width=\textwidth]{psds30k}{psd1600}{fig:psd1600}
 
+As seen, the energy in each signal is located around...
 
+\section{Time- and phase-offset (2)}
+\fig[keepaspectratio=true,width=\textwidth]{phasesignals1k6}{psd1612300}{fig:psdqwd1600}
+\fig[keepaspectratio=true,width=\textwidth]{phasesignals3k}{psd1612300}{fig:psd1qwd600}
 
+\section{Time- and phase-errors 3}
+\fig[keepaspectratio=true,width=\textwidth]{phasesignalscomp1k6}{psd1612300}{fig:psd1qwd600}
+\fig[keepaspectratio=true,width=\textwidth]{phasesignalscomp3k}{psd1612300}{fig:psd1qwd600}
 
+\section{rms and error stuff 4 og 5}
+RMS = \\
+0.0412276521009\\
+RMS deg =\\
+2.36217046462\\
+\fig[keepaspectratio=true,width=\textwidth]{phaseerr3k}{psd1612300}{fig:psd1qwd600}
 
-
-
-
-
-
-
+\section{qwd}
 
 
 
