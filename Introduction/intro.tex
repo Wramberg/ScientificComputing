@@ -228,15 +228,20 @@ As seen, the function takes the input signal and the time-vector as input. Subse
 
 \lstset{language=python,caption=Function for plotting phase signals,label=code:phaseplot}
 \begin{lstlisting}
-def plotphases():
-    tn, x, phix = getinput()
-    u, v, phiy, s = loop(x, tn)
+def plotphases(phix, phiy, phiycomp=None):
     plt.figure(figsize=(11,2.75), dpi=200)   
     plt.plot(phix, label='Phase of input signal')
     plt.plot(phiy, label='Phase of output signal')
-    plt.legend(loc=1, prop={'size': 12}, labelspacing=0.25)
+    if phiycomp is not None:
+        plt.plot(phiycomp, label='Compensated phase of output signal')
+    plt.grid()
+    plt.xlabel('Samples')
+    plt.legend(loc=3, prop={'size': 12}, labelspacing=0.25)
     plt.subplots_adjust(left=0.1, right=0.9, bottom=0.175)
-    plt.savefig('phasesignals.eps') 
+    if phiycomp is not None:
+        plt.savefig('phasesignalscomp.eps') 
+    else:
+        plt.savefig('phasesignals.eps') 
 \end{lstlisting}
 
 
@@ -253,7 +258,7 @@ def gety(phiy, tn):
 
 
 \section{Phase error}
-To compute the phase error between the in- and output phases, the function in \cref{code:phaseerr} was developed. This function return the error signal as well as the root mean square (RMS) error.
+To compute the phase error between the in- and output phases, the function in \cref{code:phaseerr} was developed. This function returns the error signal as well as the root mean square (RMS) error.
 
 \lstset{language=python,caption=Function for computing phase errors,label=code:phaseerr}
 \begin{lstlisting}
@@ -261,9 +266,9 @@ def getphaseerror(phix, phiy):
     try:
         diff = phix[:phiy.size] - phiy
     except:
-        raise Exception('Failed to compare phase signals, phiy signal cannot be longer than phix signal')
-    rmserr = np.sqrt(np.mean(diff[250:] ** 2))
-    return diff, rmserr
+        raise Exception('phiy.size must be < than phix.size')
+    err = np.sqrt(np.mean(diff[250:] ** 2))
+    return diff, err
 \end{lstlisting}
 
 To plot the phase error, the function in \cref{code:phaseerrplot} was developed.
@@ -280,7 +285,7 @@ def plotphaseerr(x):
 
 
 \section{Phase compensation}
-To perform phase compensation on the output signal, the function in \cref{code:phasecomp} was developed. This function minimizes the RMS error (between the phase signals) to find the time-offset and the average error to find the phase offset.
+To perform phase compensation on the output signal, the function in \cref{code:phasecomp} was developed. This function minimizes the RMS error (between the phase signals) to find the time-offset and the average error to find the phase offset.\\
 
 \lstset{language=python,caption=Function for performing phase compensation,label=code:phasecomp}
 \begin{lstlisting}
@@ -293,7 +298,7 @@ def phasecomp(phix, phiy):
     maxoffset = 50
     rmserr = np.empty(maxoffset)
     for i in np.arange(0, maxoffset):
-        dummy, rmserr[i] = getphaseerror(phix[200:], phiy[200+maxoffset-i:] + poff)
+        dummy, rmserr[i] = getphaseerror(phix[200:], phiy[200+maxoffset-i:]+poff)
 
     toff = maxoffset - np.argmin(rmserr)
     if toff < 0:
@@ -319,7 +324,7 @@ To find the time-offset a cross-correlation approach was initially considered. F
 %\end{lstlisting}
 
 
-\section{Psd}
+\section{Averaged periodogram}
 To compute the averaged periodogram of a signal, the function in \cref{code:periodo} was developed.
 
 \lstset{language=python,caption=Function for computing averaged periodogram,label=code:periodo}
@@ -341,7 +346,7 @@ def plotpsd(x, y):
     plt.plot(freqsx/1e3, psdx, label='PSD of input signal')
     plt.plot(freqsy/1e3, psdy, label='PSD of output signal')
     plt.grid()
-    plt.xlim(0, 3e3)
+    plt.xlim(0, 3.5e3)
     plt.xlabel('Frequency [kHz]')
     plt.legend(loc=1, prop={'size': 12}, labelspacing=0.25)
     plt.subplots_adjust(left=0.1, right=0.9, bottom=0.175)
@@ -351,31 +356,54 @@ def plotpsd(x, y):
 \chapter{Simulation results} \label{ch:intro}
 In this chapter, results are presented from the simulation platform developed in the previous chapter.
  
-\section{Psd of in- and output (1)}
+\section{Power spectrum density of in- and output (1)}
 On \figref{fig:psd1600} the PSDs are presented for the in- and output signals.
 
-\fig[keepaspectratio=true,width=\textwidth]{psds30k}{psd1600}{fig:psd1600}
+\fig[keepaspectratio=true,width=\textwidth]{psds30k}{Averaged periodogram for in- and output signal with 300 sample segments and N=30000}{fig:psd1600}
 
-As seen, the energy in each signal is located around...
+As seen, the power in the input signal is located around $f_{if}$ (\SI{800}{\kilo\hertz}) as expected. Similarly, the power in the output signal is located around $f_0$ (\SI{1.9}{\mega\hertz}) as expected. Since frequency changes correspond with the slope of the phase, frequency changes occur at the input. For this reason, the power will also be distributed among a range of frequencies as seen on the figure. It is also noteworthy that the power distribution is nearly identical for the in- and output. This is expected, since the point of the loop is to ``shift'' the signal from one frequency to another. The frequency vs. phase will discussed further in the last section.
 
 \section{Time- and phase-offset (2)}
-\fig[keepaspectratio=true,width=\textwidth]{phasesignals1k6}{psd1612300}{fig:psdqwd1600}
-\fig[keepaspectratio=true,width=\textwidth]{phasesignals3k}{psd1612300}{fig:psd1qwd600}
+On \figref{fig:phaseuncomp1600} and \figref{fig:phaseuncomp3200}, the uncompensated in- and output phase signals are presented.
 
-\section{Time- and phase-errors 3}
-\fig[keepaspectratio=true,width=\textwidth]{phasesignalscomp1k6}{psd1612300}{fig:psd1qwd600}
-\fig[keepaspectratio=true,width=\textwidth]{phasesignalscomp3k}{psd1612300}{fig:psd1qwd600}
+\fig[keepaspectratio=true,width=\textwidth]{phasesignals1k6}{Uncompensated in- and output phase signal for N=1600}{fig:phaseuncomp1600}
+\fig[keepaspectratio=true,width=\textwidth]{phasesignals3k2}{Uncompensated in- and output phase signal for N=3200}{fig:phaseuncomp3200}
 
-\section{rms and error stuff 4 og 5}
-RMS = \\
-0.0412276521009\\
-RMS deg =\\
-2.36217046462\\
-\fig[keepaspectratio=true,width=\textwidth]{phaseerr3k}{psd1612300}{fig:psd1qwd600}
+As seen, the output phase signal follows the input phase signal as wanted. A constant phase offset is present in the output signal, however, which is caused by the initial state assumptions. Since the initial state assumptions are incorrect (and not accounted for in the integral over $v(t_n)$) a constant phase offset occurs. Furthermore, the output is also delayed in respect to the input. This is caused by delay in the loop, low-pass filter and most importantly slew-rate in the NCO. The slewrate of the NCO is controlled by the NCO constant $k_{co}$, which means the NCO output takes time to adjust to input. The time-delay could be minimized by increasing $k_{co}$ but this would cause more high frequency content in the output phase.
 
-\section{qwd}
+\section{Time- and phase-errors (3)}
+On \figref{fig:phasecomp} and \figref{fig:phasecomp2}, the compensated output phase signals are presented in respect to input and uncompensated output phase signals.
 
+\fig[keepaspectratio=true,width=\textwidth]{phasesignalscomp1k6}{Compensated output phase signal for N=1600 in repect to uncompensated phase signals}{fig:phasecomp}
+\fig[keepaspectratio=true,width=\textwidth]{phasesignalscomp3k2}{Compensated output phase signal for N=3200 in repect to uncompensated phase signals}{fig:phasecomp2}
 
+As seen on the figures, the phase of the output signal follows the phase of the input rather well. Some phase-errors can be seen when the slope of the phsae changes which is caused by the NCO slew-rate discussed in the previous section. In the first samples it can also be seen that the loop has a lock-time since the initial state assumptions do not reflect the ideal initial state.
+
+\section{Phase error and RMS error (4) and (5)}
+On \figref{fig:error} and \figref{fig:error2}, the phase difference between the input and compensated output phase signals are presented.
+
+\fig[keepaspectratio=true,width=\textwidth]{phaseerr3k}{Compensated phase error signal for N=3000}{fig:error}
+\fig[keepaspectratio=true,width=\textwidth]{phaseerr30k}{Compensated phase error signal for N=30000}{fig:error2}
+
+As seen, larger phase error occurs during the lock-time and when the slope of the phase changes. Using the error signal on \figref{fig:error2} (and omitting the first 500 samples) the RMS can be found to \SI{2.36}{\degree}. Note that the phase contains some high frequency content. This caused by the non-ideal low pass filter since it does not attenuate the high-frequency term in the expression for the $u(t_n)$-signal \eqref{eq:uneq}. These could be removed by either lowering the NCO constant or increasing the filter order. Both of these solutions could however decrease the slew-rate of the loop. In a well designed loop, the high frequency oscillations would not be present but lock-time errors cannot be removed of course.
+
+%RMS = \\
+%0.0412276521009\\
+%RMS deg =\\
+%2.36217046462\\
+
+\section{Output frequency (6)}
+By using the expression for the output frequency
+\begin{flalign}
+& & f_y(t_n) &= f_0 + k_{co} \cdot v(t_n) & &
+\end{flalign}
+it was plotted as presented on \figref{fig:outfreq}.
+
+\fig[keepaspectratio=true,width=\textwidth]{outfreq}{Instantaneous output frequency}{fig:outfreq}
+
+As seen, the output frequency also suffers from the non-ideal low pass filtering. The frequency alternates around the free running frequency as wanted, however. Furthermore, the mean of the output frequency changes consistenly with the slope of the output phase as expected.\\
+
+Conclusively, the translational loop functions as wanted but some aspects (like phase- and time-offset) has to be accounted for. Furthermore, some improvements could be done to the loop since unwanted oscillations have been observed. It does yield an acceptable RMS phase error, however, which means it could be used as e.g. a frequency synthesizer or in an up/down-conversion stage.
 
 %%% Local Variables: 
 %%% mode: latex

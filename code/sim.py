@@ -4,17 +4,16 @@ import scipy.signal as signal
 import matplotlib.pyplot as plt
 import sys
 sys.path.append('/home/tausen/p8/git/code/')
-#import basics
 
 params = {'legend.fontsize': 15,
           'legend.linewidth': 2}
 plt.rcParams.update(params)
 
-N = int(30e3)
+N = int(3.2e3)
 fif = 800e3
 f0 = 1.9e6
 kco = 500e3
-#fs = 0
+fs = 0
 
 
 def getinput():
@@ -80,8 +79,8 @@ def plotphases(phix, phiy, phiycomp=None):
     if phiycomp is not None:
         plt.plot(phiycomp, label='Compensated phase of output signal')
     plt.grid()
+    plt.xlim(0, N)
     plt.xlabel('Samples')
-#    plt.ylim(-10, 12)
     plt.legend(loc=3, prop={'size': 12}, labelspacing=0.25)
     plt.subplots_adjust(left=0.1, right=0.9, bottom=0.175)
     if phiycomp is not None:
@@ -94,7 +93,7 @@ def getphaseerror(phix, phiy):
     try:
         diff = phix[:phiy.size] - phiy
     except:
-        raise Exception('The length of the phiy signal must be smaller than the length of the phix signal')
+        raise Exception('phiy.size must be < than phix.size')
     err = np.sqrt(np.mean(diff[250:] ** 2))
     return diff, err
 
@@ -113,7 +112,6 @@ def phasecomp(phix, phiy):
     toff = maxoffset - np.argmin(rmserr)
     if toff < 0:
         raise Exception('Got negative time offset, time delay should be positive')
-
     return phiy[toff:] + poff
 
 
@@ -156,6 +154,15 @@ plotpsd(x, y)
 
 diff, rms = getphaseerror(phix, phiycomp)
 plotphaseerr(diff)
-print rms
-print 180/np.pi * rms
+
+#outfreq = f0 + kco * v
+#plt.figure()
+#plt.figure(figsize=(11,2.75), dpi=200)  
+#plt.plot(outfreq/1e6)
+#plt.grid()
+#plt.ylabel('Frequency [MHz]')
+#plt.xlabel('Samples')
+#plt.subplots_adjust(left=0.1, right=0.9, bottom=0.175)
+#plt.savefig('outfreq.eps')  
+
 #plt.show()
