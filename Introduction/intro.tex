@@ -194,10 +194,10 @@ To simulate the translational loop, the function presented on \cref{code:translo
 def loop(x, tn):
     global fs, f0, fif, kco, N
 
-    # Values of s[-1], u[-1] and v[-1]
-    sm1 = 1
-    um1 = 0
-    vm1 = 0
+    sm1 = 1     # s[-1]
+    um1 = 0     # u[-1]
+    vm1 = 0     # v[-1]
+    vsum = vm1  # Running sum of v up to n
 
     # Get coefficients of 1st order Butterworth lowpass filter
     b, a = signal.butter(1, 200e3 / (fs / 2), 'low')
@@ -207,9 +207,6 @@ def loop(x, tn):
     s    = np.empty(N)
     v    = np.empty(N)
     phiy = np.empty(N)
-
-    # Running sum of v up to n
-    vsum = vm1
 
     # Calculate signals for n = 0
     u[0]    = x[0] * sm1
