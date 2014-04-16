@@ -48,7 +48,7 @@ where $f_0$ denotes the free running frequency, $t_n$ is discrete time-steps giv
 \begin{flalign}
 & & \phi'_y(t_n) &= 2\pi k_{co} \cdot \frac{1}{f_s} \sum\limits_{\ell=0}^{n}v(t_{\ell}) & & \label{eq:phiy}
 \end{flalign}
-where $k_{co}$ is the NCO constant, $v(t_{\ell})$ is the NCO input and $f_s$ denotes the sampling frequency. The point of the translational loop is to control the phase of the output $\phi'_y(t_n)$, or rather, have it follow the phase of the input. To do this, the frequency difference between the in- and output must first be accounted for. This is done by translating the free-running frequency $f_0$ to the input frequency $f_{\text{if}}$. As shown on the figure, this is done by mixing the oscilator output with an external signal. This signal is given as
+where $k_{co}$ is the NCO constant, $v(t_{\ell})$ is the NCO input and $f_s$ denotes the sampling frequency. The point of the translational loop is to control the phase of the output $\phi'_y(t_n)$, or rather, have it follow the phase of the input. To do this, the frequency difference between the in- and output must first be accounted for. This is done by translating the free-running frequency $f_0$ to the input frequency $f_{\text{if}}$. As shown on the figure, this is done by mixing the oscillator output with an external signal. This signal is given as
 \begin{flalign}
 & & z(t_n) &= 2\cos\big(2\pi(f_0-f_{\text{if}})t_n\big) & &
 \end{flalign}
