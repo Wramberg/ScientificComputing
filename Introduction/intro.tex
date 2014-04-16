@@ -84,12 +84,12 @@ As stated in the assignment, there is no way to know the initial state for the s
 \newpage
 Assuming that 
 \begin{flalign}
-& & \phi'_x(t_{-1}) &= \phi'_y(t_{-1})\big) = 0 & &
+& & \phi'_x(t_{-1}) &= \phi'_y(t_{-1}) = 0 & &
 \end{flalign}
 $u(t_{-1})$ can be found using \eqref{eq:uneq} to
 \begin{flalign}
 & & u(t_{-1}) &= \frac{1}{2}\bigg( \sin\big(2\pi 2f_{\text{if}} \: t_{-1} + \phi'_x(t_{-1}) + \phi'_y(t_{-1}) \big)    +    \sin\big(\phi'_x(t_{-1}) - \phi'_y(t_{-1})\big)\bigg)     & & \\
-& &           &= \frac{1}{2}\bigg( \sin\big(2\pi 2f_{\text{if}} \: t_{-1} \big)\bigg)     & & 
+& &           &= \frac{1}{2} \sin(2\pi 2f_{\text{if}} \: t_{-1} )     & & 
 \end{flalign}
 Now assuming that $t_{-1} = 0 $, this yields
 \begin{flalign}
@@ -156,7 +156,7 @@ From which the phase transfer function can be expressed as
 
 
 \chapter{Simulation platform} \label{ch:intro}
-In this chapter, a simulation platform is developed to perform tests on the translational loop. This platform is developed in MATLAB, just kidding, in Python. To do this, the numpy (np), scipy.signal (signal) and matplitlib.pyplot (plt) Python modules are used. It should be noted that the \texttt{\_\_future\_\_} statement for division is also used to map the division operator \texttt / to the \texttt{\_\_truediv\_\_()} function to ensure float division.
+In this chapter, a simulation platform is developed to perform tests on the translational loop. This platform is developed in MATLAB, just kidding, in Python. To do this, the numpy (np), scipy.signal (signal) and matplotlib.pyplot (plt) Python modules are used. It should be noted that the \texttt{\_\_future\_\_} statement for division is also used to map the division operator \texttt / to the \texttt{\_\_truediv\_\_()} function to ensure float division.
 \section{Input}
 To import the input data, the function presented on \cref{code:input} was developed.
 
@@ -183,11 +183,11 @@ def getinput():
 
     return tn, x, phix
 \end{lstlisting}
-As seen, the function uses the globally defined N as the number of samples to import. Furthermore, it uses a globally defined \texttt{fif} and \texttt{fs} to generate the input signal \texttt{x}. The function returns the time vector \texttt{tn} aswell as the phase \texttt{phix} and the signal itself \texttt{x}. After importing the input, the platform simulates the translational loop sample by sample, which is described in the next section.
+As seen, the function uses the globally defined N as the number of samples to import. Furthermore, it uses a globally defined \texttt{fif} and \texttt{fs} to generate the input signal \texttt{x}. The function returns the time vector \texttt{tn} as well as the phase \texttt{phix} and the signal itself \texttt{x}. After importing the input, the platform simulates the translational loop sample by sample, which is described in the next section.
 
 
 \section{Translational loop}
-To simulate the translation loop, the function presented on \cref{code:transloop} was developed.\\
+To simulate the translational loop, the function presented on \cref{code:transloop} was developed.\\
 
 \lstset{language=python,caption=Function for simulating tranlational loop,label=code:transloop}
 \begin{lstlisting}
@@ -307,7 +307,10 @@ def phasecomp(phix, phiy):
     return phiy[toff:] + poff
 \end{lstlisting}
 
-To find the time-offset a cross-correlation approach was initially considered. For time-delay estimation the cross correlation approach shows poor performance in high-snr applications however \cite{193195}. For this reason, the RMS approach was taken instead which is very similar to the average square difference estimator discussed in \cite{193195}. The only difference is the squareroot which has no effect on the resulting time-delay.
+% sloppypar to avoid long cite extending into margin
+\begin{sloppypar}
+  To find the time-offset a cross-correlation approach was initially considered. For time-delay estimation the cross correlation approach shows poor performance in high-SNR applications, however \cite{193195}. For this reason, the RMS approach was taken instead which is very similar to the average square difference estimator discussed in \cite{193195}. The only difference is the square root which has no effect on the resulting time-delay.
+\end{sloppypar}
 %Note that \texttt{signal.fftconvolve()} is used instead of \texttt{np.correlate()}. This was chosen because convolution in frequency domain is considerably faster. Testing with 30.000 samples yields a \SI{33.6}{\milli\second} difference as shown on \cref{ode:fftconvcorr}.
 
 %\lstset{language=python,caption=Time tests for fft convolve vs. standard correlation,label=code:fftconvcorr}
@@ -335,7 +338,7 @@ def getperiodogram(x):
     return freqs, psd
 \end{lstlisting}
 
-As seen, the \texttt{signal.welch()} function is used to compute the PSD. Natively, this function computes an averaged PSD by slicing overlapping segments of the input signal, windowing, detrending, and finally performing FFT, on each. In this simulation platform, however, the overlapping and windowing has been omitted and the detrending only removes DC-offset. This means the function simply computes an averaged periodogram using 300 samples non-overlapping segments. To present the PSD, the function returns a frequency axis and the computed PSD values along this axis. This is used by the function in \cref{code:periodoplot} for plotting periodograms.
+As seen, the \texttt{signal.welch()} function is used to compute the PSD. Natively, this function computes an averaged PSD by slicing overlapping segments of the input signal, windowing, detrending, and finally performing FFT, on each. In this simulation platform, however, the overlapping and windowing has been omitted and the detrending only removes DC-offset. This means the function simply computes an averaged periodogram using non-overlapping segments, each 300 samples long. To present the PSD, the function returns a frequency axis and the computed PSD values along this axis. This is used by the function in \cref{code:periodoplot} for plotting periodograms.
 
 \lstset{language=python,caption=Function for plotting periodogram of in- and output signals,label=code:periodoplot}
 \begin{lstlisting}
@@ -361,7 +364,7 @@ On \figref{fig:psd1600} the PSDs are presented for the in- and output signals.
 
 \fig[keepaspectratio=true,width=\textwidth]{psds30k}{Averaged periodogram for in- and output signal with 300 sample segments and N=30000}{fig:psd1600}
 
-As seen, the power in the input signal is located around $f_{if}$ (\SI{800}{\kilo\hertz}) as expected. Similarly, the power in the output signal is located around $f_0$ (\SI{1.9}{\mega\hertz}) as expected. Since frequency changes correspond with the slope of the phase, frequency changes occur at the input. For this reason, the power will also be distributed among a range of frequencies as seen on the figure. It is also noteworthy that the power distribution is nearly identical for the in- and output. This is expected, since the point of the loop is to ``shift'' the signal from one frequency to another. The frequency vs. phase will discussed further in the last section.
+As seen, the power in the input signal is located around $f_{\text{if}}$ (\SI{800}{\kilo\hertz}) as expected. Similarly, the power in the output signal is located around $f_0$ (\SI{1.9}{\mega\hertz}) as expected. Since frequency changes correspond with the slope of the phase, frequency changes occur at the input. For this reason, the power will also be distributed among a range of frequencies as seen on the figure. It is also noteworthy that the power distribution is nearly identical for the in- and output. This is expected, since the point of the loop is to ``shift'' the signal from one frequency to another. The frequency vs. phase will discussed further in the last section.
 
 \section{Time- and phase-offset (2)}
 On \figref{fig:phaseuncomp1600} and \figref{fig:phaseuncomp3200}, the uncompensated in- and output phase signals are presented.
@@ -369,15 +372,15 @@ On \figref{fig:phaseuncomp1600} and \figref{fig:phaseuncomp3200}, the uncompensa
 \fig[keepaspectratio=true,width=\textwidth]{phasesignals1k6}{Uncompensated in- and output phase signal for N=1600}{fig:phaseuncomp1600}
 \fig[keepaspectratio=true,width=\textwidth]{phasesignals3k2}{Uncompensated in- and output phase signal for N=3200}{fig:phaseuncomp3200}
 
-As seen, the output phase signal follows the input phase signal as wanted. A constant phase offset is present in the output signal, however, which is caused by the initial state assumptions. Since the initial state assumptions are incorrect (and not accounted for in the integral over $v(t_n)$) a constant phase offset occurs. Furthermore, the output is also delayed in respect to the input. This is caused by delay in the loop, low-pass filter and most importantly slew-rate in the NCO. The slewrate of the NCO is controlled by the NCO constant $k_{co}$, which means the NCO output takes time to adjust to input. The time-delay could be minimized by increasing $k_{co}$ but this would cause more high frequency content in the output phase.
+As seen, the output phase signal follows the input phase signal as wanted. A constant phase offset is present in the output signal, however, which is caused by the initial state assumptions. Since the initial state assumptions are incorrect (and not accounted for in the integral over $v(t_n)$) a constant phase offset occurs. Furthermore, the output is also delayed in respect to the input. This is caused by delays in the loop, low-pass filter and most importantly the slew-rate of the NCO. The slewrate of the NCO is controlled by the NCO constant $k_{co}$, which means the NCO output takes time to adjust to input. The time-delay could be minimized by increasing $k_{\text{co}}$ but this would cause more high frequency content in the output phase.
 
 \section{Time- and phase-errors (3)}
 On \figref{fig:phasecomp} and \figref{fig:phasecomp2}, the compensated output phase signals are presented in respect to input and uncompensated output phase signals.
 
-\fig[keepaspectratio=true,width=\textwidth]{phasesignalscomp1k6}{Compensated output phase signal for N=1600 in repect to uncompensated phase signals}{fig:phasecomp}
-\fig[keepaspectratio=true,width=\textwidth]{phasesignalscomp3k2}{Compensated output phase signal for N=3200 in repect to uncompensated phase signals}{fig:phasecomp2}
+\fig[keepaspectratio=true,width=\textwidth]{phasesignalscomp1k6}{Compensated output phase signal for N=1600 in respect to uncompensated phase signals}{fig:phasecomp}
+\fig[keepaspectratio=true,width=\textwidth]{phasesignalscomp3k2}{Compensated output phase signal for N=3200 in respect to uncompensated phase signals}{fig:phasecomp2}
 
-As seen on the figures, the phase of the output signal follows the phase of the input rather well. Some phase-errors can be seen when the slope of the phsae changes which is caused by the NCO slew-rate discussed in the previous section. In the first samples it can also be seen that the loop has a lock-time since the initial state assumptions do not reflect the ideal initial state.
+As seen on the figures, the phase of the output signal follows the phase of the input rather well. Some phase-errors can be seen when the slope of the phase changes, which is caused by the NCO slew-rate discussed in the previous section. In the first samples it can also be seen that the loop has a lock-time since the initial state assumptions do not reflect the ideal initial state.
 
 \section{Phase error and RMS error (4) and (5)}
 On \figref{fig:error} and \figref{fig:error2}, the phase difference between the input and compensated output phase signals are presented.
@@ -385,7 +388,7 @@ On \figref{fig:error} and \figref{fig:error2}, the phase difference between the 
 \fig[keepaspectratio=true,width=\textwidth]{phaseerr3k}{Compensated phase error signal for N=3000}{fig:error}
 \fig[keepaspectratio=true,width=\textwidth]{phaseerr30k}{Compensated phase error signal for N=30000}{fig:error2}
 
-As seen, larger phase error occurs during the lock-time and when the slope of the phase changes. Using the error signal on \figref{fig:error2} (and omitting the first 500 samples) the RMS can be found to \SI{2.36}{\degree}. Note that the phase contains some high frequency content. This caused by the non-ideal low pass filter since it does not attenuate the high-frequency term in the expression for the $u(t_n)$-signal \eqref{eq:uneq}. These could be removed by either lowering the NCO constant or increasing the filter order. Both of these solutions could however decrease the slew-rate of the loop. In a well designed loop, the high frequency oscillations would not be present but lock-time errors cannot be removed of course.
+As seen, larger phase error occurs during the lock-time and when the slope of the phase changes. Using the error signal on \figref{fig:error2} (and omitting the first 500 samples) the RMS can be found to \SI{2.36}{\degree}. Note that the phase contains some high frequency content. This is caused by the non-ideal low pass filter since it does not attenuate the high-frequency term in the expression for the $u(t_n)$-signal \eqref{eq:uneq}. These could be removed by either lowering the NCO constant or increasing the filter order. Both of these solutions could however decrease the slew-rate of the loop. In a well designed loop, the high frequency oscillations would not be present but lock-time errors cannot be removed of course.
 
 %RMS = \\
 %0.0412276521009\\
@@ -401,9 +404,9 @@ it was plotted as presented on \figref{fig:outfreq}.
 
 \fig[keepaspectratio=true,width=\textwidth]{outfreq}{Instantaneous output frequency}{fig:outfreq}
 
-As seen, the output frequency also suffers from the non-ideal low pass filtering. The frequency alternates around the free running frequency as wanted, however. Furthermore, the mean of the output frequency changes consistenly with the slope of the output phase as expected.\\
+As seen, the output frequency also suffers from the non-ideal low pass filtering. The frequency alternates around the free running frequency as wanted, however. Furthermore, the mean of the output frequency changes consistently with the slope of the output phase as expected.\\
 
-Conclusively, the translational loop functions as wanted but some aspects (like phase- and time-offset) has to be accounted for. Furthermore, some improvements could be done to the loop since unwanted oscillations have been observed. It does yield an acceptable RMS phase error, however, which means it could be used as e.g. a frequency synthesizer or in an up/down-conversion stage.
+Conclusively, the translational loop functions as wanted but some aspects (like phase- and time-offset) have to be accounted for. Furthermore, some improvements could be done to the loop since unwanted oscillations have been observed. It does yield an acceptable RMS phase error, however, which means it could be used as e.g. a frequency synthesizer or in an up/down-conversion stage.
 
 %%% Local Variables: 
 %%% mode: latex
